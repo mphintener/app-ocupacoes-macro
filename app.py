@@ -3,12 +3,26 @@ import streamlit as st
 import pandas as pd
 
 # 1. DADOS DA MACRORREGIÃO INTEGRADOS (Não precisa de CSV!)
-dados_vagas = [
-    {"cidade": "Cajamar", "setor": "Logística", "vagas": 145, "cargo": "Auxiliar Logístico"},
-    {"cidade": "Cajamar", "setor": "Logística", "vagas": 30, "cargo": "Op. Empilhadeira"},
-    {"cidade": "Caieiras", "setor": "Indústria", "vagas": 52, "cargo": "Ajudante de Produção"},
-    {"cidade": "Franco da Rocha", "setor": "Serviços", "vagas": 40, "cargo": "Atendente"},
-    {"cidade": "Francisco Morato", "setor": "Comércio", "vagas": 25, "cargo": "Vendedor"}
+dados_vagas = [   # Substitua a lista 'dados_vagas' por esta:
+    # CAJAMAR (Foco Logístico)
+    {"cidade": "Cajamar", "setor": "Logística", "vagas": 182, "cargo": "Auxiliar de Logística"},
+    {"cidade": "Cajamar", "setor": "Logística", "vagas": 45, "cargo": "Operador de Empilhadeira"},
+    {"cidade": "Cajamar", "setor": "Transporte", "vagas": 28, "cargo": "Motorista (Cat. D/E)"},
+    
+    # CAIEIRAS (Foco Industrial e Administrativo)
+    {"cidade": "Caieiras", "setor": "Indústria", "vagas": 64, "cargo": "Ajudante de Produção"},
+    {"cidade": "Caieiras", "setor": "Indústria", "vagas": 12, "cargo": "Técnico em Manutenção"},
+    {"cidade": "Caieiras", "setor": "Administração", "vagas": 35, "cargo": "Assistente Administrativo"},
+    
+    # FRANCO DA ROCHA (Serviços e Saúde)
+    {"cidade": "Franco da Rocha", "setor": "Serviços", "vagas": 58, "cargo": "Atendente de SAC"},
+    {"cidade": "Franco da Rocha", "setor": "Saúde", "vagas": 22, "cargo": "Técnico de Enfermagem"},
+    {"cidade": "Franco da Rocha", "setor": "Tecnologia", "vagas": 15, "cargo": "Suporte de TI"},
+    
+    # FRANCISCO MORATO (Comércio e Varejo)
+    {"cidade": "Francisco Morato", "setor": "Comércio", "vagas": 72, "cargo": "Operador de Caixa"},
+    {"cidade": "Francisco Morato", "setor": "Comércio", "vagas": 40, "cargo": "Vendedor Lojista"},
+    {"cidade": "Francisco Morato", "setor": "Educação", "vagas": 18, "cargo": "Auxiliar Escolar"}
 ]
 df_vagas = pd.DataFrame(dados_vagas)
 
