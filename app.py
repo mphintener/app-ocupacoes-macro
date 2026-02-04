@@ -1,39 +1,38 @@
+
 import streamlit as st
 import pandas as pd
-import plotly.express as px
 
-# 1. BANCO DE DADOS
-instituicoes_macro = [
-    {"cidade": "Caieiras", "nome": "ETEC de Caieiras", "cursos": ["Administração", "Logística"]},
-    {"cidade": "Franco da Rocha", "nome": "ETEC Dr. Emílio Hernandez", "cursos": ["Logística", "TI"]},
-    {"cidade": "Cajamar", "nome": "ETEC Gino Rezaghi", "cursos": ["Logística", "RH"]},
-    {"cidade": "Francisco Morato", "nome": "ETEC Francisco Morato", "cursos": ["Informática", "Enfermagem"]}
+# 1. DADOS DA MACRORREGIÃO INTEGRADOS (Não precisa de CSV!)
+dados_vagas = [
+    {"cidade": "Cajamar", "setor": "Logística", "vagas": 145, "cargo": "Auxiliar Logístico"},
+    {"cidade": "Cajamar", "setor": "Logística", "vagas": 30, "cargo": "Op. Empilhadeira"},
+    {"cidade": "Caieiras", "setor": "Indústria", "vagas": 52, "cargo": "Ajudante de Produção"},
+    {"cidade": "Franco da Rocha", "setor": "Serviços", "vagas": 40, "cargo": "Atendente"},
+    {"cidade": "Francisco Morato", "setor": "Comércio", "vagas": 25, "cargo": "Vendedor"}
 ]
+df_vagas = pd.DataFrame(dados_vagas)
 
-# 2. INTERFACE
-st.set_page_config(page_title="App Ocupações", layout="wide")
-st.title("📍 Conexão Ocupações")
+# 2. INTERFACE DO APP
+st.set_page_config(page_title="App Ocupações Macro", layout="wide")
+st.title("📍 Conexão Ocupações Regional")
 
 # 3. FILTROS
-cidade_sel = st.sidebar.selectbox("Escolha sua Cidade:", ["Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"])
-setor_sel = st.sidebar.selectbox("Setor:", ["Logística", "Indústria", "Administração", "Tecnologia"])
+cidade_sel = st.sidebar.selectbox("Sua Cidade:", ["Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"])
 
-# 4. EXIBIÇÃO
-st.subheader(f"Onde estudar em {cidade_sel}")
+# 4. EXIBIÇÃO DE VAGAS REAIS
+st.header(f"Oportunidades em {cidade_sel}")
 
-escolas_locais = [e for e in instituicoes_macro if e['cidade'] == cidade_sel]
+vagas_filtradas = df_vagas[df_vagas['cidade'] == cidade_sel]
 
-if escolas_locais:
-    for escola in escolas_locais:
-        # O segredo está nestes 4 espaços antes do 'with'
-        with st.expander(f"🏫 {escola['nome']}"):
-            st.write(f"Cursos disponíveis: {', '.join(escola['cursos'])}")
-            st.info(f"Foco regional em {setor_sel}")
+if not vagas_filtradas.empty:
+    for _, linha in vagas_filtradas.iterrows():
+        with st.container():
+            col1, col2 = st.columns([3, 1])
+            col1.write(f"**{linha['cargo']}** ({linha['setor']})")
+            col2.subheader(f"🔥 {linha['vagas']}")
+            st.divider()
 else:
-    st.write("Nenhuma escola cadastrada para esta cidade.")
+    st.info("Buscando novas atualizações do CAGED para esta cidade...")
 
-# 5. GRÁFICO SIMPLES
-st.divider()
-dados = pd.DataFrame({'Cidade': ["Cajamar", "Caieiras", "Franco"], 'Vagas': [150, 80, 60]})
-fig = px.bar(dados, x='Cidade', y='Vagas', title="Tendência Regional")
-st.plotly_chart(fig)
+# 5. DICA DE QUALIFICAÇÃO
+st.sidebar.info(f"Dica: Procure a ETEC de {cidade_sel} para cursos em {vagas_filtradas['setor'].iloc[0] if not vagas_filtradas.empty else 'Logística'}.")
