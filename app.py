@@ -7,22 +7,33 @@ st.set_page_config(page_title="App Ocupações Macro", layout="wide")
 # CSS PARA FONTES ELEGANTES E MENORES
 st.markdown("""
     <style>
-    [data-testid="stMetricValue"] {
-        font-size: 24px !important;
-    }
-    [data-testid="stMetricLabel"] {
-        font-size: 14px !important;
-    }
+    [data-testid="stMetricValue"] { font-size: 24px !important; }
+    [data-testid="stMetricLabel"] { font-size: 14px !important; }
     </style>
     """, unsafe_allow_html=True)
 
-# 2. BANCO DE DADOS (Salários ajustados para inteiros)
+# 2. BANCO DE DADOS EXPANDIDO (Mais vagas por cidade)
 dados_lista = [
-    {"cidade": "Cajamar", "local": "Jordanésia (Polo Logístico)", "setor": "Logística", "vagas": 182, "cargo": "Auxiliar de Logística", "salario": 1850},
-    {"cidade": "Cajamar", "local": "Polvilho (Comércio)", "setor": "Comércio", "vagas": 45, "cargo": "Vendedor Lojista", "salario": 1720},
-    {"cidade": "Caieiras", "local": "Laranjeiras (Indústria)", "setor": "Indústria", "vagas": 64, "cargo": "Ajudante de Produção", "salario": 1980},
-    {"cidade": "Franco da Rocha", "local": "Centro (Polo Comercial)", "setor": "Serviços", "vagas": 58, "cargo": "Atendente de SAC", "salario": 1650},
-    {"cidade": "Francisco Morato", "local": "Belas Águas (Comércio)", "setor": "Comércio", "vagas": 72, "cargo": "Operador de Caixa", "salario": 1680}
+    # CAJAMAR
+    {"cidade": "Cajamar", "local": "Jordanésia (Logística)", "setor": "Logística", "vagas": 182, "cargo": "Auxiliar de Logística", "salario": 1850},
+    {"cidade": "Cajamar", "local": "Jordanésia (Polo II)", "setor": "Logística", "vagas": 25, "cargo": "Conferente", "salario": 2100},
+    {"cidade": "Cajamar", "local": "Polvilho", "setor": "Comércio", "vagas": 45, "cargo": "Vendedor Lojista", "salario": 1720},
+    {"cidade": "Cajamar", "local": "Distrito Industrial", "setor": "Indústria", "vagas": 12, "cargo": "Operador de Máquina", "salario": 2300},
+    
+    # CAIEIRAS
+    {"cidade": "Caieiras", "local": "Laranjeiras", "setor": "Indústria", "vagas": 64, "cargo": "Ajudante de Produção", "salario": 1980},
+    {"cidade": "Caieiras", "local": "Laranjeiras (Metalurgia)", "setor": "Indústria", "vagas": 15, "cargo": "Soldador", "salario": 2800},
+    {"cidade": "Caieiras", "local": "Centro", "setor": "Administração", "vagas": 35, "cargo": "Assistente Administrativo", "salario": 2150},
+    
+    # FRANCO DA ROCHA
+    {"cidade": "Franco da Rocha", "local": "Centro", "setor": "Serviços", "vagas": 58, "cargo": "Atendente de SAC", "salario": 1650},
+    {"cidade": "Franco da Rocha", "local": "Vila Rosalina", "setor": "Tecnologia", "vagas": 15, "cargo": "Suporte de TI", "salario": 2400},
+    {"cidade": "Franco da Rocha", "local": "Pq. Munhoz", "setor": "Saúde", "vagas": 10, "cargo": "Recepcionista Hospitalar", "salario": 1750},
+    
+    # FRANCISCO MORATO
+    {"cidade": "Francisco Morato", "local": "Belas Águas", "setor": "Comércio", "vagas": 72, "cargo": "Operador de Caixa", "salario": 1680},
+    {"cidade": "Francisco Morato", "local": "Centro", "setor": "Serviços", "vagas": 40, "cargo": "Vendedor de Serviços", "salario": 1700},
+    {"cidade": "Francisco Morato", "local": "Jd. Alegria", "setor": "Educação", "vagas": 8, "cargo": "Monitor Escolar", "salario": 1550}
 ]
 df_vagas = pd.DataFrame(dados_lista)
 
@@ -34,10 +45,8 @@ st.markdown("---")
 # 4. PANORAMA REGIONAL
 st.markdown("### 📊 Panorama Socioeconômico Regional")
 c1, c2 = st.columns(2)
-# Formatação aplicada também aqui para manter o padrão
 c1.metric("Desemprego (Grande SP)", "8.1%", "-0.4%")
 c2.metric("Renda Média PNADC", "R$ 3.240", "Referência")
-st.caption("**Fonte:** PNADC/IBGE (Ref: Q4 2025).")
 st.divider()
 
 # 5. BUSCA CENTRALIZADA
@@ -55,17 +64,17 @@ for _, linha in vagas_f.iterrows():
     with st.container():
         st.subheader(f"💼 {linha['cargo']}")
         
-        # FORMATAÇÃO: R$ 1.720 (ponto para milhar, sem centavos)
-        salario_formatado = f"R$ {linha['salario']:,.0f}".replace(',', '.')
-        st.metric(label="Salário Admissional Médio (CAGED)", value=salario_formatado)
+        # Formatação Salário R$ 1.720
+        sal_val = f"R$ {linha['salario']:,.0f}".replace(',', '.')
+        st.metric(label="Salário Admissional Médio (CAGED)", value=sal_val)
         
-        st.write(f"🏢 **Unidade Produtiva/Cluster:** {linha['local']}")
-        st.write(f"📈 **Saldo de Vagas:** {linha['vagas']} | **Setor:** {linha['setor']}")
+        st.write(f"🏢 **Unidade/Bairro:** {linha['local']}")
+        st.write(f"📈 **Saldo:** {linha['vagas']} vagas | **Setor:** {linha['setor']}")
 
         if linha['setor'] in ['Logística', 'Indústria', 'Tecnologia', 'Administração']:
-            st.link_button("🚀 Ver Cursos Técnicos (ETEC)", "https://www.vestibulinhoetec.com.br/", use_container_width=True)
+            st.link_button(f"🚀 Ver Cursos Técnicos para {linha['setor']}", "https://www.vestibulinhoetec.com.br/", use_container_width=True)
         else:
-            st.link_button("💡 Qualificação Profissional (Sebrae)", "https://www.sebrae.com.br/sites/PortalSebrae/ufs/sp?mapa=1", use_container_width=True)
+            st.link_button(f"💡 Qualificação Profissional (Sebrae)", "https://www.sebrae.com.br/sites/PortalSebrae/ufs/sp?mapa=1", use_container_width=True)
         st.write("---")
 
 # 7. GRÁFICO E TABELA FINAL
