@@ -65,7 +65,18 @@ if not vagas_f.empty:
 else:
     st.warning("Selecione uma cidade para carregar os dados.")
 
-# 6. GRÁFICO DE TENDÊNCIA
+# 6. GRÁFICO DE TENDÊNCIA (Versão Blindada)
+st.markdown("---")
 st.subheader("📈 Evolução Mensal de Vagas")
-hist = pd.DataFrame({'Saldo': [120, 150, -30, 85]}, index=['Out', 'Nov', 'Dez', 'Jan'])
-st.line_chart(hist, color="#2ecc71")
+
+# Criando os dados de forma que o Streamlit não tenha dúvidas
+dados_grafico = pd.DataFrame({
+    'Meses': ['Out', 'Nov', 'Dez', 'Jan'],
+    'Vagas': [120, 150, -30, 85]
+})
+
+# Forçamos o gráfico a usar a coluna 'Meses' no eixo X
+st.line_chart(data=dados_grafico, x='Meses', y='Vagas', color="#2ecc71")
+
+st.caption("Tendência do saldo líquido mensal na Macrorregião (Fonte: Novo CAGED).")
+
