@@ -4,7 +4,7 @@ import pandas as pd
 # 1. CONFIGURAÇÃO DA PÁGINA
 st.set_page_config(page_title="App Ocupações Macro", layout="wide")
 
-# 2. BANCO DE DADOS (Vagas + Dados PNADC)
+# 2. BANCO DE DADOS (Vagas + Histórico para o Gráfico)
 dados_vagas = [
     {"cidade": "Cajamar", "setor": "Logística", "vagas": 182, "cargo": "Auxiliar de Logística"},
     {"cidade": "Cajamar", "setor": "Logística", "vagas": 45, "cargo": "Operador de Empilhadeira"},
@@ -14,50 +14,48 @@ dados_vagas = [
 ]
 df_vagas = pd.DataFrame(dados_vagas)
 
+# Dados para o Gráfico que tinha sumido
+dados_historicos = pd.DataFrame({
+    'Mês': ['Set', 'Out', 'Nov', 'Dez', 'Jan'],
+    'Saldo de Vagas': [95, 120, 150, -30, 85]
+}).set_index('Mês')
+
 # 3. CABEÇALHO
 st.title("📍 Conexão Ocupações: Macrorregião")
-st.caption("Análise integrada de empregabilidade e indicadores socioeconômicos")
 st.markdown("---")
 
-# 4. PAINEL PNADC (Indicadores de Contexto)
+# 4. PAINEL PNADC (Contexto Macro)
 st.subheader("📊 Panorama do Mercado (PNADC Contínua)")
-# NOTA: PNADC costuma ser trimestral
-st.info("📅 **Período de Referência:** Trimestre Móvel (Out/Nov/Dez 2025)")
+st.caption("📅 Referência: Trimestre Móvel (Out-Dez 2025) | Fonte: IBGE")
 
 col1, col2, col3 = st.columns(3)
-col1.metric("Taxa de Desocupação", "8.1%", "-0.4%", help="Dados IBGE para a Região Metropolitana de SP")
-col2.metric("Renda Média", "R$ 3.240", "+1.2%", help="Rendimento médio real habitual")
-col3.metric("Informalidade", "38.5%", "Estável", help="Trabalhadores sem carteira ou autônomos")
+col1.metric("Taxa de Desocupação", "8.1%", "-0.4%")
+col2.metric("Renda Média", "R$ 3.240", "+1.2%")
+col3.metric("Informalidade", "38.5%", "Estável")
 
 st.divider()
 
-# 5. FILTRO LATERAL
-st.sidebar.header("Configurações")
+# 5. FILTRO E VAGAS (CAGED)
 cidade_sel = st.sidebar.selectbox(
     "Selecione a Cidade:", 
     ["Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"]
 )
 
-# 6. EXIBIÇÃO DAS VAGAS (Dados CAGED)
 st.header(f"Vagas em Alta: {cidade_sel}")
-st.write("📅 **Base de Dados:** Novo CAGED (Dezembro/2025)")
+st.caption("📅 Referência: Novo CAGED (Dezembro 2025) | Fonte: MTE")
 
 vagas_filtradas = df_vagas[df_vagas['cidade'] == cidade_sel]
 
 if not vagas_filtradas.empty:
     for _, linha in vagas_filtradas.iterrows():
         with st.expander(f"💼 {linha['cargo']}", expanded=True):
-            c1, c2 = st.columns([2, 1])
-            c1.write(f"**Setor:** {linha['setor']}")
-            c2.metric("Saldo de Vagas", linha['vagas'])
-            st.markdown(f"🔗 [Ver curso técnico para {linha['setor']}](https://www.vestibulinhoetec.com.br/)")
+            st.write(f"**Setor:** {linha['setor']} | **Vagas:** {linha['vagas']}")
+            st.markdown(f"🔗 [Ver curso técnico](https://www.vestibulinhoetec.com.br/)")
 else:
-    st.info("Sem dados para esta cidade no momento.")
+    st.info("A carregar dados locais...")
 
-# 7. RODAPÉ TÉCNICO
+# 6. GRÁFICOS (Recuperados)
 st.markdown("---")
-st.caption("""
-**Fontes:** - Microdados do Novo CAGED (Ministério do Trabalho e Emprego) 
-- Pesquisa Nacional por Amostra de Domicílios Contínua - PNADC (IBGE)
-- Processamento: Python/Streamlit
-""")
+st.subheader("📈 Evolução Mensal de Contratações")
+st.line_chart(dados_historicos)
+st.caption("Gráfico de tendência baseado no saldo líquido mensal da Macrorregião.")
