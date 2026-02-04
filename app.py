@@ -1,54 +1,71 @@
 import streamlit as st
 import pandas as pd
 
-# 1. CONFIGURAÇÃO BÁSICA
-st.set_page_config(page_title="App Ocupações", layout="wide")
+# 1. SETUP
+st.set_page_config(page_title="App Ocupações Macro", layout="wide")
 
-# 2. DADOS (Escritos de forma ultra-simples)
-dados_vagas = [
-    {"cidade": "Cajamar", "vagas": 182, "cargo": "Auxiliar de Logística", "setor": "Logística"},
-    {"cidade": "Cajamar", "vagas": 45, "cargo": "Operador de Empilhadeira", "setor": "Logística"},
-    {"cidade": "Cajamar", "vagas": 28, "cargo": "Motorista (Cat. D/E)", "setor": "Transporte"},
-    {"cidade": "Caieiras", "vagas": 64, "cargo": "Ajudante de Produção", "setor": "Indústria"},
-    {"cidade": "Caieiras", "vagas": 12, "cargo": "Técnico em Manutenção", "setor": "Indústria"},
-    {"cidade": "Caieiras", "vagas": 35, "cargo": "Assistente Administrativo", "setor": "Administração"},
-    {"cidade": "Franco da Rocha", "vagas": 58, "cargo": "Atendente de SAC", "setor": "Serviços"},
-    {"cidade": "Franco da Rocha", "vagas": 22, "cargo": "Técnico de Enfermagem", "setor": "Saúde"},
-    {"cidade": "Francisco Morato", "vagas": 72, "cargo": "Operador de Caixa", "setor": "Comércio"},
-    {"cidade": "Francisco Morato", "vagas": 40, "cargo": "Vendedor Lojista", "setor": "Comércio"}
+# 2. BANCO DE DADOS DETALHADO (Cidades, Bairros e Setores)
+dados_lista = [
+    # CAJAMAR
+    {"cidade": "Cajamar", "local": "Jordanésia (Polo Logístico)", "setor": "Logística", "vagas": 182, "cargo": "Auxiliar de Logística"},
+    {"cidade": "Cajamar", "local": "Polvilho", "setor": "Comércio", "vagas": 45, "cargo": "Vendedor Lojista"},
+    {"cidade": "Cajamar", "local": "Distrito Industrial", "setor": "Transporte", "vagas": 28, "cargo": "Motorista (Cat. D/E)"},
+    
+    # CAIEIRAS
+    {"cidade": "Caieiras", "local": "Laranjeiras", "setor": "Indústria", "vagas": 64, "cargo": "Ajudante de Produção"},
+    {"cidade": "Caieiras", "local": "Centro", "setor": "Administração", "vagas": 35, "cargo": "Assistente Administrativo"},
+    {"cidade": "Caieiras", "local": "Melhoramentos", "setor": "Indústria", "vagas": 12, "cargo": "Técnico em Manutenção"},
+    
+    # FRANCO DA ROCHA
+    {"cidade": "Franco da Rocha", "local": "Centro (Comércio)", "setor": "Serviços", "vagas": 58, "cargo": "Atendente de SAC"},
+    {"cidade": "Franco da Rocha", "local": "Pq. Munhoz", "setor": "Saúde", "vagas": 22, "cargo": "Técnico de Enfermagem"},
+    {"cidade": "Franco da Rocha", "local": "Vila Rosalina", "setor": "Tecnologia", "vagas": 15, "cargo": "Suporte de TI"},
+    
+    # FRANCISCO MORATO
+    {"cidade": "Francisco Morato", "local": "Belas Águas", "setor": "Comércio", "vagas": 72, "cargo": "Operador de Caixa"},
+    {"cidade": "Francisco Morato", "local": "Jd. Alegria", "setor": "Educação", "vagas": 18, "cargo": "Auxiliar Escolar"},
+    {"cidade": "Francisco Morato", "local": "Centro", "setor": "Serviços", "vagas": 40, "cargo": "Vendedor"}
 ]
-df = pd.DataFrame(dados_vagas)
+df_vagas = pd.DataFrame(dados_lista)
 
 # 3. INTERFACE
-st.title("📍 Conexão Ocupações")
+st.title("📍 Conexão Ocupações: Macrorregião")
+st.markdown("---")
 
-# Painel PNADC (Top)
+# Painel PNADC (Contexto Macro)
 st.subheader("📊 Panorama Regional (PNADC)")
-st.caption("Ref: Out-Dez/2025 | Fonte: IBGE")
-c1, c2 = st.columns(2)
+st.caption("📅 Ref: Out-Dez/2025 | Fonte: IBGE")
+c1, c2, c3 = st.columns(3)
 c1.metric("Desemprego", "8.1%", "-0.4%")
 c2.metric("Renda Média", "R$ 3.240", "+1.2%")
+c3.metric("Informalidade", "38.5%", "Estável")
 
 st.divider()
 
-# 4. FILTRO (Menu Lateral)
-cidade_sel = st.sidebar.selectbox("Escolha a Cidade:", ["Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"])
+# 4. FILTRO LATERAL
+cidade_sel = st.sidebar.selectbox("Selecione a Cidade:", ["Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"])
 
-# 5. EXIBIÇÃO DAS VAGAS (Lógica simplificada)
-st.header(f"Vagas em {cidade_sel}")
+# 5. EXIBIÇÃO DAS VAGAS COM BAIRRO E QUALIFICAÇÃO
+st.header(f"Oportunidades em {cidade_sel}")
+st.caption("📅 Ref: Novo CAGED (Dezembro/2025)")
 
-# Aqui filtramos de forma direta e simples
-vagas_f = df[df['cidade'] == cidade_sel]
+vagas_f = df_vagas[df_vagas['cidade'] == cidade_sel]
 
-if len(vagas_f) > 0:
-    for i, linha in vagas_f.iterrows():
-        st.info(f"💼 **{linha['cargo']}**")
-        st.write(f"Setor: {linha['setor']} | Saldo: {linha['vagas']} vagas")
-        st.write("---")
+if not vagas_f.empty:
+    for _, linha in vagas_f.iterrows():
+        with st.container():
+            st.info(f"💼 **{linha['cargo']}**")
+            # Concatenação de Bairro e Unidade
+            st.write(f"📍 **Localização:** {linha['local']}")
+            st.write(f"🏢 **Setor:** {linha['setor']} | 📈 **Vagas:** {linha['vagas']}")
+            
+            # Link de Qualificação recuperado
+            st.markdown(f"🔗 [**Qualificar-se para {linha['setor']} (ETEC/FATEC)**](https://www.vestibulinhoetec.com.br/)")
+            st.write("---")
 else:
-    st.error("Erro: Não encontramos vagas para esta seleção. Verifique os nomes.")
+    st.warning("Selecione uma cidade para carregar os dados.")
 
-# 6. GRÁFICO (Sempre visível no fim)
-st.subheader("📈 Evolução de Vagas")
+# 6. GRÁFICO DE TENDÊNCIA
+st.subheader("📈 Evolução Mensal de Vagas")
 hist = pd.DataFrame({'Saldo': [120, 150, -30, 85]}, index=['Out', 'Nov', 'Dez', 'Jan'])
 st.line_chart(hist, color="#2ecc71")
