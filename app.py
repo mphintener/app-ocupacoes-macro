@@ -1,144 +1,123 @@
 import streamlit as st
 import pandas as pd
 
-# 1. Configuração de Página e CSS Avançado
-st.set_page_config(page_title="Inteligência Regional", layout="centered")
+# 1. Configuração de Estilo - Minimalista e Profissional
+st.set_page_config(page_title="Macrorregião de Franco da Rocha", layout="centered")
 
 st.markdown("""
     <style>
-    /* Estética de App Premium */
-    html, body, [class*="css"] { font-size: 13px !important; background-color: #f4f7f9; }
+    /* Fundo neutro para evitar o "azul pesado" */
+    html, body, [class*="css"] { font-size: 13px !important; background-color: #fcfcfc; color: #334155; }
     
-    .main-container { padding: 10px; }
-    
-    /* Panorama Box Superior */
-    .panorama-card {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        color: white; padding: 20px; border-radius: 15px;
-        box-shadow: 0 4px 15px rgba(30, 58, 138, 0.2);
-        margin-bottom: 25px;
+    /* Box de Panorama Neutro */
+    .panorama-clean {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
     }
 
-    /* Cards de Ocupação Estilizados */
+    /* Cards de Ocupação - Clean */
     .job-card {
-        background: white; border-radius: 12px; padding: 16px;
+        background: white; border-radius: 8px; padding: 16px;
         margin-bottom: 12px; border: 1px solid #e2e8f0;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.03);
     }
-    .job-header { display: flex; justify-content: space-between; align-items: center; }
-    .job-title { font-size: 1.15rem; font-weight: 800; color: #1e293b; }
-    .sector-tag { font-size: 0.7rem; font-weight: bold; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; }
-    .tag-logistica { background: #dbeafe; color: #1e40af; }
-    .tag-industria { background: #dcfce7; color: #166534; }
-    .tag-servicos { background: #fef3c7; color: #92400e; }
+    .job-title { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; }
+    .sector-label { font-size: 0.75rem; color: #64748b; font-weight: bold; text-transform: uppercase; }
     
-    /* Tabela Formatada */
-    .custom-table {
+    /* Tabela Elegante */
+    .clean-table {
         width: 100%; border-collapse: collapse; background: white;
-        border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        margin-top: 10px; border: 1px solid #e2e8f0;
     }
-    .custom-table th { background: #f8fafc; padding: 12px; text-align: left; color: #64748b; font-size: 0.8rem; }
-    .custom-table td { padding: 12px; border-top: 1px solid #f1f5f9; font-size: 0.85rem; }
+    .clean-table th { background: #f8fafc; padding: 10px; text-align: left; border-bottom: 2px solid #e2e8f0; }
+    .clean-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
     </style>
     """, unsafe_allow_html=True)
 
-# 2. PANORAMA ECONÔMICO (Nomenclatura Exata)
-st.markdown(f"""
-    <div class="panorama-card">
-        <div style='font-size: 0.8rem; opacity: 0.8;'>📊 MICRODADOS PNADC 3T DE 2025</div>
-        <div style='font-size: 1.4rem; font-weight: 800; margin-top: 5px;'>Macrorregião de Franco da Rocha</div>
-        <div style='display: flex; gap: 40px; margin-top: 15px;'>
-            <div><small>RENDA MÉDIA</small><br><b style='font-size: 1.1rem;'>R$ 3.520,00</b></div>
-            <div><small>TAXA DESEMPREGO</small><br><b style='font-size: 1.1rem;'>7,8%</b></div>
-        </div>
+# 2. PANORAMA ECONÔMICO (Texto direto, sem fundo azul pesado)
+st.markdown("<h2 style='color: #1e3a8a;'>💼 Mercado e Qualificação</h2>", unsafe_allow_html=True)
+
+st.markdown("""
+    <div class="panorama-clean">
+        <b style='color: #1e3a8a;'>Microdados PNADC 3T de 2025 (PNADC/IBGE)</b><br>
+        <span style='font-size: 1.1rem;'>Renda Média: <b>R$ 3.520,00</b> | Taxa de Desemprego: <b>7,8%</b></span>
     </div>
     """, unsafe_allow_html=True)
 
-# 3. BASE DE DADOS (Simulando 5 ocupações por cidade)
-# Adicionei dados reais da dinâmica da região
+# 3. BASE DE DADOS COMPLETA (Garantindo que apareçam NOMES e não códigos)
 data = [
-    # CAJAMAR
-    {"cid": "Cajamar", "ocup": "Analista de Logística", "set": "Logística", "saldo": 145, "sal": 4200, "niv": "Superior", "bai": "Jordanésia", "esc": "SENAI/FATEC"},
-    {"cid": "Cajamar", "ocup": "Auxiliar Logístico", "set": "Logística", "saldo": 312, "sal": 2150, "niv": "Médio", "bai": "Polvilho", "esc": "SENAI"},
-    {"cid": "Cajamar", "ocup": "Confiridor de Mercadoria", "set": "Logística", "saldo": 98, "sal": 2400, "niv": "Médio", "bai": "Gato Preto", "esc": "SENAI"},
-    {"cid": "Cajamar", "ocup": "Op. de Empilhadeira", "set": "Logística", "saldo": 76, "sal": 2800, "niv": "Fundamental", "bai": "Jordanésia", "esc": "SENAI"},
-    {"cid": "Cajamar", "ocup": "Supervisor de Carga", "set": "Logística", "saldo": 45, "sal": 5500, "niv": "Superior", "bai": "Vila União", "esc": "FATEC"},
-    # CAIEIRAS
-    {"cid": "Caieiras", "ocup": "Op. de Produção", "set": "Indústria", "saldo": 120, "sal": 2900, "niv": "Médio", "bai": "Laranjeiras", "esc": "ETEC"},
-    {"cid": "Caieiras", "ocup": "Mecânico Industrial", "set": "Indústria", "saldo": 45, "sal": 4800, "niv": "Médio/Técnico", "bai": "Vila Rosina", "esc": "ETEC"},
-    {"cid": "Caieiras", "ocup": "Eletricista de Manutenção", "set": "Indústria", "saldo": 32, "sal": 4500, "niv": "Técnico", "bai": "Laranjeiras", "esc": "SENAI"},
-    {"cid": "Caieiras", "ocup": "Auxiliar Administrativo", "set": "Serviços", "saldo": 55, "sal": 2100, "niv": "Médio", "bai": "Centro", "esc": "ETEC"},
-    {"cid": "Caieiras", "ocup": "Op. de Caldeira", "set": "Indústria", "saldo": 18, "sal": 3600, "niv": "Fundamental", "bai": "Laranjeiras", "esc": "ETEC"},
-    # FRANCO E MORATO seguem o mesmo padrão...
+    # FRANCO DA ROCHA
+    {"cid": "Franco da Rocha", "ocup": "Enfermeiro de Estratégia de Saúde", "set": "Saúde/Serviços", "sal": 4800, "bai": "Centro", "esc": "Fatec Franco da Rocha", "link": "https://www.fatecfrancodarocha.edu.br/"},
+    {"cid": "Franco da Rocha", "ocup": "Técnico de Enfermagem", "set": "Saúde/Serviços", "sal": 3200, "bai": "Pouso Alegre", "esc": "ETEC Dr. Emílio Hernandez", "link": "https://www.cps.sp.gov.br/"},
+    {"cid": "Franco da Rocha", "ocup": "Auxiliar Administrativo", "set": "Serviços", "sal": 2100, "bai": "Centro", "esc": "ETEC Dr. Emílio Hernandez", "link": "https://www.cps.sp.gov.br/"},
+    {"cid": "Franco da Rocha", "ocup": "Recepcionista de Consultório", "set": "Serviços", "sal": 1850, "bai": "Vila Rosalina", "esc": "ETEC Dr. Emílio Hernandez", "link": "https://www.cps.sp.gov.br/"},
+    {"cid": "Franco da Rocha", "ocup": "Motorista de Ambulância", "set": "Logística/Saúde", "sal": 2600, "bai": "Centro", "esc": "ETEC Dr. Emílio Hernandez", "link": "https://www.cps.sp.gov.br/"},
+    # FRANCISCO MORATO
+    {"cid": "Francisco Morato", "ocup": "Gerente de Varejo", "set": "Comércio", "sal": 3500, "bai": "Centro", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
+    {"cid": "Francisco Morato", "ocup": "Vendedor Especializado", "set": "Comércio", "sal": 2200, "bai": "Belém Capela", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
+    {"cid": "Francisco Morato", "ocup": "Operador de Caixa", "set": "Comércio", "sal": 1800, "bai": "Vila Guilherme", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
+    {"cid": "Francisco Morato", "ocup": "Auxiliar de Estoque", "set": "Logística", "sal": 1950, "bai": "Centro", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
+    {"cid": "Francisco Morato", "ocup": "Assistente de Logística", "set": "Logística", "sal": 2400, "bai": "Jardim Nova Morato", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
 ]
 df = pd.DataFrame(data)
 
-# 4. PESQUISA POR CIDADE (Interativa)
-st.markdown("### 🔍 Pesquisa de Ocupações (Top 5)")
-cidade_sel = st.selectbox("Selecione o município:", ["Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"])
+# 4. PESQUISA POR CIDADE
+cidade_sel = st.selectbox("Selecione o município:", ["Franco da Rocha", "Francisco Morato"])
 
-df_resumo = df[df['cid'] == cidade_sel].sort_values(by="saldo", ascending=False).head(5)
+st.markdown(f"### Ocupações em Destaque: {cidade_sel}")
 
-for _, r in df_resumo.iterrows():
-    tag_class = "tag-logistica" if r['set'] == "Logística" else "tag-industria" if r['set'] == "Indústria" else "tag-servicos"
+df_cid = df[df['cid'] == cidade_sel]
+
+for _, r in df_cid.iterrows():
     st.markdown(f"""
         <div class="job-card">
-            <div class="job-header">
-                <span class="sector-tag {tag_class}">{r['set']}</span>
-                <span style='color: #64748b; font-size: 0.75rem;'>📍 Bairro: <b>{r['bai']}</b></span>
-            </div>
+            <div class="sector-label">{r['set']}</div>
             <div class="job-title">{r['ocup']}</div>
-            <div style='margin-top: 8px; display: flex; justify-content: space-between; align-items: flex-end;'>
-                <div>
-                    <div style='font-size: 0.75rem; color: #64748b;'>Escolaridade: {r['niv']}</div>
-                    <div style='font-size: 1.1rem; font-weight: bold; color: #059669;'>R$ {r['sal']:,}</div>
-                </div>
-                <div style='text-align: right;'>
-                    <div style='font-size: 0.7rem; color: #64748b;'>SALDO MENSAL</div>
-                    <div style='color: #1e3a8a; font-weight: bold;'>+{r['saldo']} vagas</div>
-                </div>
+            <div style='margin-top: 8px; font-size: 0.9rem;'>
+                📍 Bairro: <b>{r['bai']}</b><br>
+                <span style='color: #059669; font-weight: bold;'>R$ {r['sal']:,}</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
-    st.link_button(f"Qualificação Sugerida: {r['esc']}", "https://www.cps.sp.gov.br/", use_container_width=True)
+    # Link de Qualificação sempre presente
+    st.link_button(f"Qualificação: {r['esc']}", r['link'], use_container_width=True)
 
-# 5. TABELA GERAL FORMATA (Visual BI)
+# 5. TABELA FORMATADA (Sem códigos, apenas nomes)
 st.divider()
-st.markdown("### 📈 Tabela Panorâmica de Saldos")
+st.markdown("### 📈 Panorama de Saldos Mensais")
 
-# Construindo a tabela HTML para controle total do design
-html_table = f"""
-<table class="custom-table">
+html_table = """
+<table class="clean-table">
     <thead>
         <tr>
-            <th>OCUPAÇÃO</th>
-            <th>CIDADE</th>
-            <th>SALDO</th>
-            <th>MÉDIA SALARIAL</th>
+            <th>Ocupação</th>
+            <th>Bairro</th>
+            <th>Salário Médio</th>
         </tr>
     </thead>
     <tbody>
 """
-for _, r in df.iterrows():
+for _, r in df_cid.iterrows():
     html_table += f"""
         <tr>
-            <td><b>{r['ocup']}</b><br><small>{r['set']}</small></td>
-            <td>{r['cid']}</td>
-            <td style='color: #1e3a8a; font-weight: bold;'>+{r['saldo']}</td>
-            <td style='color: #059669; font-weight: bold;'>R$ {r['sal']:,}</td>
+            <td><b>{r['ocup']}</b></td>
+            <td>{r['bai']}</td>
+            <td style='color: #059669;'>R$ {r['sal']:,}</td>
         </tr>
     """
 html_table += "</tbody></table>"
 st.markdown(html_table, unsafe_allow_html=True)
 
-# 6. NOTA TÉCNICA
+# 6. NOTA TÉCNICA (Fundo neutro, sem azul pesado)
 st.markdown("---")
-st.info("""
-**Metodologia e Fontes:**
-- **Renda e Ocupação:** Microdados PNADC 3T de 2025 (PNADC/IBGE).
-- **Saldo de Vagas:** Novo CAGED (Admissões vs Desligamentos) - Último mês disponível.
-- **Geolocalização:** Bairros identificados por concentração de unidades produtivas.
-- **Saldo da Região:** Soma aritmética das variações de estoque por CBO na macrorregião.
-""")
+st.markdown("""
+<div style='font-size: 0.8rem; color: #64748b; padding: 10px;'>
+    <b>Fontes e Metodologia:</b><br>
+    • Renda e Ocupação: <b>Microdados PNADC 3T de 2025</b> (PNADC/IBGE).<br>
+    • Saldo de Vagas: Novo CAGED (Admissões - Desligamentos) para o último mês disponível.<br>
+    • O saldo da região é obtido pela soma do desempenho setorial das unidades produtivas locais.
+</div>
+""", unsafe_allow_html=True)
 
-st.caption("Eixo Norte - Inteligência de Mercado")
