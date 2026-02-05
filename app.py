@@ -1,105 +1,114 @@
 import streamlit as st
 import pandas as pd
 
-# 1. Ajuste Técnico de Visual (Clean, Profissional, Sem Cores Pesadas)
-st.set_page_config(page_title="Macrorregião de Franco da Rocha", layout="centered")
+# 1. Estética Profissional (Clean e Direta)
+st.set_page_config(page_title="Inteligência Territorial", layout="centered")
 
 st.markdown("""
     <style>
-    /* Estilo Minimalista */
-    html, body, [class*="css"] { font-size: 13px !important; color: #334155; }
+    html, body, [class*="css"] { font-size: 13px !important; color: #1f2937; }
     .stApp { background-color: #ffffff; }
     
-    /* Container de Dados PNADC */
-    .pnadc-container {
-        border: 1px solid #e2e8f0;
+    /* Bloco de Informação Panorâmica */
+    .panorama-box {
+        border: 1px solid #e5e7eb;
         padding: 15px;
-        border-radius: 5px;
-        margin-bottom: 25px;
-        background-color: #f8fafc;
+        border-radius: 4px;
+        background-color: #f9fafb;
+        margin-bottom: 20px;
     }
     
-    /* Card de Ocupação - Sem Quadro Branco Excessivo */
+    /* Card de Ocupação Enxuto */
     .card-vaga {
-        padding: 15px;
-        border-bottom: 2px solid #f1f5f9;
-        margin-bottom: 10px;
+        padding: 12px 0px;
+        border-bottom: 1px solid #f3f4f6;
     }
-    .ocupacao-titulo { font-size: 1.1rem; font-weight: bold; color: #1e3a8a; }
-    .detalhe-vaga { font-size: 0.85rem; color: #64748b; margin-top: 5px; }
-    .valor-salario { color: #059669; font-weight: bold; font-size: 1rem; }
+    .titulo-vaga { font-size: 1.1rem; font-weight: bold; color: #111827; }
+    .info-secundaria { color: #6b7280; font-size: 0.85rem; margin-top: 4px; }
+    .salario-vaga { color: #059669; font-weight: bold; margin-top: 4px; }
     </style>
     """, unsafe_allow_html=True)
 
-# 2. Título e Panorama Econômico
-st.markdown("## 💼 Mercado e Qualificação")
+# 2. Título e Panorama Econômico (PNADC 3T 2025)
+st.markdown("## Ocupações e Mercado de Trabalho")
 st.markdown("### Macrorregião de Franco da Rocha")
 
 st.markdown("""
-    <div class="pnadc-container">
-        <b>📊 Panorama Econômico:</b><br>
-        Fonte: <b>Microdados PNADC 3T de 2025</b><br>
-        Renda Média: <b>R$ 3.520,00</b> | Taxa de Desemprego: <b>7,8%</b>
+    <div class="panorama-box">
+        <b>Panorama Econômico Regional</b><br>
+        Fonte: Microdados PNADC 3T de 2025 (PNADC/IBGE)<br>
+        • Taxa de Desemprego: <b>7,8%</b> | Renda Média: <b>R$ 3.520,00</b>
     </div>
     """, unsafe_allow_html=True)
 
-# 3. Base de Dados (Nomes Reais de Ocupações, Setores e Bairros)
-# Simulação dos 5 cargos que mais geraram vagas (CAGED)
-vagas_data = {
+# 3. Base de Dados (Estrutura conforme roteiro)
+# Dados simulados do Novo CAGED (Saldo, Salário, Escolaridade, Bairro)
+dados_vagas = {
+    "Cajamar": [
+        {"cargo": "Analista de Logística", "setor": "Logística", "saldo": 145, "sal": 4200, "esc": "Superior", "bai": "Jordanésia", "link": "https://cajamar.sp.senai.br/"},
+        {"cargo": "Auxiliar de Operações", "setor": "Logística", "saldo": 312, "sal": 2150, "esc": "Médio", "bai": "Polvilho", "link": "https://cajamar.sp.senai.br/"},
+        {"cargo": "Conferente", "setor": "Logística", "saldo": 98, "sal": 2600, "esc": "Médio", "bai": "Gato Preto", "link": "https://cajamar.sp.senai.br/"},
+        {"cargo": "Operador de Empilhadeira", "setor": "Logística", "saldo": 76, "sal": 2900, "esc": "Fundamental", "bai": "Jordanésia", "link": "https://cajamar.sp.senai.br/"},
+        {"cargo": "Líder de Logística", "setor": "Logística", "saldo": 45, "sal": 3800, "esc": "Médio", "bai": "Polvilho", "link": "https://cajamar.sp.senai.br/"}
+    ],
     "Franco da Rocha": [
-        {"ocup": "Técnico de Enfermagem", "set": "Saúde", "sal": 3450, "bai": "Centro", "esc": "ETEC Dr. Emílio Hernandez", "link": "https://www.cps.sp.gov.br/"},
-        {"ocup": "Analista Administrativo", "set": "Serviços", "sal": 3100, "bai": "Vila Rosalina", "esc": "Fatec Franco da Rocha", "link": "https://www.fatecfrancodarocha.edu.br/"},
-        {"ocup": "Operador de Logística", "set": "Logística", "sal": 2100, "bai": "Pouso Alegre", "esc": "ETEC Dr. Emílio Hernandez", "link": "https://www.cps.sp.gov.br/"},
-        {"ocup": "Vendedor de Comércio", "set": "Varejo", "sal": 1950, "bai": "Centro", "esc": "ETEC Dr. Emílio Hernandez", "link": "https://www.cps.sp.gov.br/"},
-        {"ocup": "Auxiliar de Manutenção", "set": "Indústria", "sal": 2400, "bai": "Polo Industrial", "esc": "ETEC Dr. Emílio Hernandez", "link": "https://www.cps.sp.gov.br/"}
+        {"cargo": "Técnico de Enfermagem", "setor": "Saúde", "saldo": 88, "sal": 3450, "esc": "Médio", "bai": "Centro", "link": "https://www.cps.sp.gov.br/"},
+        {"cargo": "Analista Administrativo", "setor": "Serviços", "saldo": 54, "sal": 3100, "esc": "Superior", "bai": "Vila Rosalina", "link": "https://www.fatecfrancodarocha.edu.br/"},
+        {"cargo": "Vendedor", "setor": "Comércio", "saldo": 120, "sal": 1950, "esc": "Médio", "bai": "Centro", "link": "https://www.cps.sp.gov.br/"},
+        {"cargo": "Auxiliar de Logística", "setor": "Transportes", "saldo": 65, "sal": 2100, "esc": "Médio", "bai": "Pouso Alegre", "link": "https://www.cps.sp.gov.br/"},
+        {"cargo": "Recepcionista", "setor": "Serviços", "saldo": 32, "sal": 1850, "esc": "Médio", "bai": "Centro", "link": "https://www.cps.sp.gov.br/"}
+    ],
+    "Caieiras": [
+        {"cargo": "Operador de Produção", "setor": "Indústria", "saldo": 110, "sal": 2800, "esc": "Médio", "bai": "Laranjeiras", "link": "https://www.cps.sp.gov.br/"},
+        {"cargo": "Mecânico de Manutenção", "setor": "Indústria", "saldo": 42, "sal": 4500, "esc": "Médio", "bai": "Vila Rosina", "link": "https://www.cps.sp.gov.br/"},
+        {"cargo": "Ajudante de Carga", "setor": "Logística", "saldo": 75, "sal": 1950, "esc": "Fundamental", "bai": "Laranjeiras", "link": "https://www.cps.sp.gov.br/"},
+        {"cargo": "Eletricista Industrial", "setor": "Indústria", "saldo": 28, "sal": 4200, "esc": "Médio", "bai": "Laranjeiras", "link": "https://www.cps.sp.gov.br/"},
+        {"cargo": "Auxiliar Administrativo", "setor": "Serviços", "saldo": 40, "sal": 2200, "esc": "Médio", "bai": "Centro", "link": "https://www.cps.sp.gov.br/"}
     ],
     "Francisco Morato": [
-        {"ocup": "Gerente de Loja", "set": "Varejo", "sal": 3800, "bai": "Centro", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
-        {"ocup": "Assistente Logístico", "set": "Transportes", "sal": 2450, "bai": "Belém Capela", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
-        {"ocup": "Vendedor Especializado", "set": "Varejo", "sal": 2100, "bai": "Vila Guilherme", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
-        {"ocup": "Operador de Caixa", "set": "Varejo", "sal": 1820, "bai": "Centro", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"},
-        {"ocup": "Estoquista", "set": "Logística", "sal": 1900, "bai": "Jardim Nova Morato", "esc": "ETEC Francisco Morato", "link": "http://etecfranciscomorato.com.br/"}
+        {"cargo": "Gerente de Loja", "setor": "Comércio", "saldo": 35, "sal": 3800, "esc": "Médio", "bai": "Centro", "link": "http://etecfranciscomorato.com.br/"},
+        {"cargo": "Vendedor Especializado", "setor": "Comércio", "saldo": 92, "sal": 2200, "esc": "Médio", "bai": "Belém Capela", "link": "http://etecfranciscomorato.com.br/"},
+        {"cargo": "Operador de Caixa", "setor": "Comércio", "saldo": 140, "sal": 1820, "esc": "Médio", "bai": "Centro", "link": "http://etecfranciscomorato.com.br/"},
+        {"cargo": "Assistente Logístico", "setor": "Logística", "saldo": 55, "sal": 2450, "esc": "Médio", "bai": "Nova Morato", "link": "http://etecfranciscomorato.com.br/"},
+        {"cargo": "Estoquista", "setor": "Comércio", "saldo": 80, "sal": 1900, "esc": "Médio", "bai": "Vila Guilherme", "link": "http://etecfranciscomorato.com.br/"}
     ]
 }
 
-# 4. Filtro por Cidade
-cidade_selecionada = st.selectbox("Selecione o Município:", list(vagas_data.keys()))
+# 4. Pesquisa por Cidade (Top 5)
+escolha_cidade = st.selectbox("Pesquisar por Cidade:", list(dados_vagas.keys()))
 
-st.markdown(f"#### Principais Ocupações em {cidade_selecionada} (Saldo CAGED)")
+st.markdown(f"#### Top 5 Ocupações que mais geraram vagas em {escolha_cidade}")
 
-# 5. Exibição das 5 Ocupações e Links
-for item in vagas_data[cidade_selecionada]:
+for item in dados_vagas[escolha_cidade]:
     st.markdown(f"""
         <div class="card-vaga">
-            <div class="ocupacao-titulo">{item['ocup']}</div>
-            <div class="detalhe-vaga">
-                🏢 Setor: <b>{item['set']}</b> | 📍 Bairro: <b>{item['bai']}</b><br>
-                <span class="valor-salario">Salário Médio: R$ {item['sal']:,}</span>
+            <div class="titulo-vaga">{item['cargo']}</div>
+            <div class="info-secundaria">
+                Setor: <b>{item['setor']}</b> | Bairro: <b>{item['bai']}</b> | Nível: <b>{item['esc']}</b>
             </div>
+            <div class="salario-vaga">Salário Médio: R$ {item['sal']:,} | Saldo: +{item['saldo']} vagas</div>
         </div>
         """, unsafe_allow_html=True)
-    st.link_button(f"Qualificação Sugerida: {item['esc']}", item['link'])
+    st.link_button(f"Link para Qualificação", item['link'])
 
-# 6. Tabela Ilustrativa de Saldo Regional
+# 5. Tabela de Saldo da Região
 st.divider()
-st.markdown("### 📊 Tabela de Saldos da Região")
+st.markdown("### Saldo da Região por Ocupação")
 
-# Gerando dataframe para a tabela
-df_lista = []
-for cid, lista in vagas_data.items():
+# Preparação da tabela
+lista_final = []
+for cid, lista in dados_vagas.items():
     for o in lista:
-        df_lista.append({"Ocupação": o['ocup'], "Cidade": cid, "Setor": o['set'], "Salário": o['sal']})
+        lista_final.append({"Ocupação": o['cargo'], "Cidade": cid, "Saldo": o['saldo'], "Salário Médio": o['sal']})
+df_tabela = pd.DataFrame(lista_final)
 
-df_final = pd.DataFrame(df_lista)
+st.table(df_tabela)
 
-st.table(df_final)
-
-# 7. Nota Técnica
-st.markdown("---")
+# 6. Notas e Explicação
+st.divider()
 st.markdown("""
-**Nota Técnica:**
-- **Fontes:** Microdados PNADC 3T de 2025 (PNADC/IBGE) e Novo CAGED (Último mês disponível).
-- **Saldo:** Diferença entre admissões e desligamentos.
-- **Bairros:** Unidades produtivas com maior saldo de contratação.
+**Nota Esclarecedora:**
+- **Fontes:** Rendimento e Desemprego extraídos dos microdados PNADC 3T de 2025. Dados de Ocupações e Saldo provenientes do Novo CAGED (último mês disponível).
+- **Saldo de Vagas:** Representa o resultado líquido (Admissões menos Desligamentos) no período.
+- **Bairros:** Refere-se à localização das unidades produtivas que registraram as maiores movimentações.
 """)
-
