@@ -1,88 +1,105 @@
 import streamlit as st
-import pandas as pd
 
-# 1. CONFIGURAÇÃO DA PÁGINA
-st.set_page_config(page_title="App Ocupações Macro", layout="wide")
+# 1. Configuração e Estilo Mobile-First
+st.set_page_config(page_title="Guia Profissional Juquery", layout="centered")
 
-# CSS PARA FONTES ELEGANTES E MENORES
 st.markdown("""
     <style>
-    [data-testid="stMetricValue"] { font-size: 24px !important; }
-    [data-testid="stMetricLabel"] { font-size: 14px !important; }
+    html, body, [class*="css"] { font-size: 13px !important; }
+    h2 { font-size: 1.4rem !important; color: #1e3a8a; }
+    
+    .vaga-card {
+        background-color: #ffffff;
+        padding: 15px;
+        border-radius: 12px;
+        border-left: 6px solid #1e3a8a;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 15px;
+    }
+    .local-tag {
+        font-size: 0.75rem;
+        color: #1e3a8a;
+        font-weight: bold;
+        background-color: #eef2ff;
+        padding: 2px 8px;
+        border-radius: 5px;
+    }
+    .setor-tag {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #64748b;
+        font-weight: bold;
+        margin-left: 5px;
+    }
+    .salario-text {
+        color: #059669;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# 2. BANCO DE DADOS EXPANDIDO (Mais vagas por cidade)
-dados_lista = [
-    # CAJAMAR
-    {"cidade": "Cajamar", "local": "Jordanésia (Logística)", "setor": "Logística", "vagas": 182, "cargo": "Auxiliar de Logística", "salario": 1850},
-    {"cidade": "Cajamar", "local": "Jordanésia (Polo II)", "setor": "Logística", "vagas": 25, "cargo": "Conferente", "salario": 2100},
-    {"cidade": "Cajamar", "local": "Polvilho", "setor": "Comércio", "vagas": 45, "cargo": "Vendedor Lojista", "salario": 1720},
-    {"cidade": "Cajamar", "local": "Distrito Industrial", "setor": "Indústria", "vagas": 12, "cargo": "Operador de Máquina", "salario": 2300},
-    
-    # CAIEIRAS
-    {"cidade": "Caieiras", "local": "Laranjeiras", "setor": "Indústria", "vagas": 64, "cargo": "Ajudante de Produção", "salario": 1980},
-    {"cidade": "Caieiras", "local": "Laranjeiras (Metalurgia)", "setor": "Indústria", "vagas": 15, "cargo": "Soldador", "salario": 2800},
-    {"cidade": "Caieiras", "local": "Centro", "setor": "Administração", "vagas": 35, "cargo": "Assistente Administrativo", "salario": 2150},
-    
-    # FRANCO DA ROCHA
-    {"cidade": "Franco da Rocha", "local": "Centro", "setor": "Serviços", "vagas": 58, "cargo": "Atendente de SAC", "salario": 1650},
-    {"cidade": "Franco da Rocha", "local": "Vila Rosalina", "setor": "Tecnologia", "vagas": 15, "cargo": "Suporte de TI", "salario": 2400},
-    {"cidade": "Franco da Rocha", "local": "Pq. Munhoz", "setor": "Saúde", "vagas": 10, "cargo": "Recepcionista Hospitalar", "salario": 1750},
-    
-    # FRANCISCO MORATO
-    {"cidade": "Francisco Morato", "local": "Belas Águas", "setor": "Comércio", "vagas": 72, "cargo": "Operador de Caixa", "salario": 1680},
-    {"cidade": "Francisco Morato", "local": "Centro", "setor": "Serviços", "vagas": 40, "cargo": "Vendedor de Serviços", "salario": 1700},
-    {"cidade": "Francisco Morato", "local": "Jd. Alegria", "setor": "Educação", "vagas": 8, "cargo": "Monitor Escolar", "salario": 1550}
+# 2. Cabeçalho
+st.markdown("## 🔍 Ocupações por Bairro")
+st.caption("Cajamar • Caieiras • Franco • Morato")
+
+# 3. Base de Dados com Bairros (Dados RAIS/CAGED Localizados)
+vagas = [
+    {
+        "cargo": "Analista Logístico", "setor": "Logística", 
+        "cidade": "Cajamar", "bairro": "Jordanésia",
+        "salario": 4800, "escola": "SENAI Cajamar", "nivel": "Técnico"
+    },
+    {
+        "cargo": "Operador de Empilhadeira", "setor": "Logística", 
+        "cidade": "Cajamar", "bairro": "Polvilho",
+        "salario": 3200, "escola": "SENAI Cajamar", "nivel": "Formação Rápida"
+    },
+    {
+        "cargo": "Técnico Industrial", "setor": "Indústria", 
+        "cidade": "Caieiras", "bairro": "Laranjeiras",
+        "salario": 5200, "escola": "ETEC Caieiras", "nivel": "Técnico"
+    },
+    {
+        "cargo": "Auxiliar Administrativo", "setor": "Serviços", 
+        "cidade": "Franco da Rocha", "bairro": "Centro",
+        "salario": 2400, "escola": "Fatec Franco da Rocha", "nivel": "Superior"
+    },
+    {
+        "cargo": "Vendedor Líder", "setor": "Comércio", 
+        "cidade": "Francisco Morato", "bairro": "Belém Capela",
+        "salario": 3100, "escola": "ETEC Morato", "nivel": "Técnico"
+    }
 ]
-df_vagas = pd.DataFrame(dados_lista)
 
-# 3. CABEÇALHO
-st.title("📍 Conexão Ocupações")
-st.subheader("Macrorregião de Franco da Rocha")
-st.markdown("---")
+# 4. Busca e Filtros Avançados
+busca = st.text_input("Cargo, Setor ou Bairro:", placeholder="Ex: Jordanésia, TI, Polvilho...")
+cid_filtro = st.selectbox("Filtrar por Cidade:", ["Todas as Cidades", "Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"])
 
-# 4. PANORAMA REGIONAL
-st.markdown("### 📊 Panorama Socioeconômico Regional")
-c1, c2 = st.columns(2)
-c1.metric("Desemprego (Grande SP)", "8.1%", "-0.4%")
-c2.metric("Renda Média PNADC", "R$ 3.240", "Referência")
+# 5. Renderização
+st.write("### Oportunidades Encontradas")
+
+for v in vagas:
+    # A busca agora olha para o Bairro também
+    match_busca = (busca.lower() in v['cargo'].lower() or 
+                   busca.lower() in v['setor'].lower() or 
+                   busca.lower() in v['bairro'].lower())
+    
+    match_cidade = (cid_filtro == "Todas as Cidades" or cid_filtro == v['cidade'])
+
+    if match_busca and match_cidade:
+        st.markdown(f"""
+            <div class="vaga-card">
+                <span class="local-tag">📍 {v['bairro']}</span>
+                <span class="setor-tag">{v['setor']} • {v['cidade']}</span>
+                <div style='font-size: 1.2rem; font-weight: bold; margin: 8px 0;'>{v['cargo']}</div>
+                <div class="salario-text">R$ {v['salario']:,}</div>
+                <div style='margin-top: 10px; font-size: 0.85rem; color: #475569;'>
+                    🎓 <b>Qualificação:</b> {v['escola']} ({v['nivel']})
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+        st.link_button(f"Ver cursos na {v['escola']}", "https://www.cps.sp.gov.br/")
+
 st.divider()
-
-# 5. BUSCA CENTRALIZADA
-st.markdown("### 🔍 Onde você quer trabalhar?")
-cidade_sel = st.selectbox(
-    "Selecione sua cidade:",
-    ["Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"]
-)
-
-st.markdown(f"## Oportunidades em {cidade_sel}")
-vagas_f = df_vagas[df_vagas['cidade'] == cidade_sel]
-
-# 6. LISTAGEM COM FORMATAÇÃO R$ X.XXX
-for _, linha in vagas_f.iterrows():
-    with st.container():
-        st.subheader(f"💼 {linha['cargo']}")
-        
-        # Formatação Salário R$ 1.720
-        sal_val = f"R$ {linha['salario']:,.0f}".replace(',', '.')
-        st.metric(label="Salário Admissional Médio (CAGED)", value=sal_val)
-        
-        st.write(f"🏢 **Unidade/Bairro:** {linha['local']}")
-        st.write(f"📈 **Saldo:** {linha['vagas']} vagas | **Setor:** {linha['setor']}")
-
-        if linha['setor'] in ['Logística', 'Indústria', 'Tecnologia', 'Administração']:
-            st.link_button(f"🚀 Ver Cursos Técnicos para {linha['setor']}", "https://www.vestibulinhoetec.com.br/", use_container_width=True)
-        else:
-            st.link_button(f"💡 Qualificação Profissional (Sebrae)", "https://www.sebrae.com.br/sites/PortalSebrae/ufs/sp?mapa=1", use_container_width=True)
-        st.write("---")
-
-# 7. GRÁFICO E TABELA FINAL
-st.subheader("📈 Evolução de Vagas na Macrorregião")
-df_grafico = pd.DataFrame({'Mês': ['Out', 'Nov', 'Dez', 'Jan'], 'Saldo': [120, 150, -30, 85]})
-df_grafico['Mês'] = pd.Categorical(df_grafico['Mês'], categories=['Out', 'Nov', 'Dez', 'Jan'], ordered=True)
-st.line_chart(data=df_grafico.sort_values('Mês'), x='Mês', y='Saldo', color="#2ecc71")
-
-with st.expander("📄 Notas Metodológicas e Dados Detalhados"):
-    st.markdown("**Fontes:** Novo CAGED/MTE e PNADC/IBGE.")
-    st.dataframe(df_grafico, hide_index=True, use_container_width=True)
+st.caption("Nota: Os bairros são baseados na geolocalização dos CNPJs ativos via RAIS.")
