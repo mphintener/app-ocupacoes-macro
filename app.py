@@ -1,10 +1,8 @@
 import streamlit as st
-import pandas as pd
 
-# 1. Configuração de Estabilidade
-st.set_page_config(page_title="Macrorregião de Franco da Rocha", layout="centered")
+# 1. Configuração e Estilo (O que funcionou: limpo e mobile-first)
+st.set_page_config(page_title="Mercado Regional", layout="centered")
 
-# 2. O Estilo que você aprovou (Limpo e Funcional)
 st.markdown("""
     <style>
     html, body, [class*="css"] { font-size: 13px !important; }
@@ -24,44 +22,43 @@ st.markdown("""
         font-weight: bold;
         font-size: 0.75rem;
     }
-    .pnadc-box {
-        background-color: #eef2ff;
-        padding: 12px;
+    .pnadc-info {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 10px;
         border-radius: 8px;
-        border: 1px solid #c7d2fe;
         margin-bottom: 20px;
         font-size: 0.85rem;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Título e Subtítulo (Corrigidos)
-st.markdown("<h2 style='text-align: center; color: #1e3a8a; margin-bottom:0;'>💼 Mercado e Qualificação</h2>", unsafe_allow_html=True)
+# 2. Cabeçalho (Macrorregião de Franco da Rocha)
+st.markdown("<h2 style='text-align: center; color: #1e3a8a; margin-bottom:0;'>💼 Ocupações e Qualificação</h2>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; color: #64748b;'>Macrorregião de Franco da Rocha</p>", unsafe_allow_html=True)
 
-# 4. PANORAMA PNADC 3T-2025 (Integrado de forma direta)
-st.markdown(f"""
-    <div class="pnadc-box">
-        <b>📊 Panorama PNADC (3T-2025):</b><br>
-        O rendimento médio real na região é de <b>R$ 3.520,00</b>. 
-        A taxa de desocupação estabilizou em <b>7,8%</b>, com forte absorção de mão de obra nos setores de 
-        Logística e Serviços na Macrorregião de Franco da Rocha.
+# 3. Panorama PNADC 3T-2025 (Direto e sem poluição)
+st.markdown("""
+    <div class="pnadc-info">
+        <b>📊 Panorama Regional (PNADC 3T-2025):</b><br>
+        Rendimento médio: <b>R$ 3.520,00</b> | Desocupação: <b>7,8%</b><br>
+        Destaque: Absorção de mão de obra em Logística e Indústria.
     </div>
     """, unsafe_allow_html=True)
 
-# 5. Base de Dados (Dinamizada com Setor e Bairro)
+# 4. Dados (Vagas, Bairros e Setores)
 vagas = [
     {"cargo": "Analista Logístico", "setor": "Logística", "cid": "Cajamar", "bairro": "Jordanésia", "sal": 4200, "escola": "SENAI Cajamar"},
-    {"cargo": "Técnico de Manutenção", "setor": "Indústria", "cid": "Caieiras", "bairro": "Laranjeiras", "sal": 4900, "escola": "ETEC Caieiras"},
+    {"cargo": "Técnico Industrial", "setor": "Indústria", "cid": "Caieiras", "bairro": "Laranjeiras", "sal": 4900, "escola": "ETEC Caieiras"},
     {"cargo": "Desenvolvedor Júnior", "setor": "Tecnologia", "cid": "Franco da Rocha", "bairro": "Centro", "sal": 7200, "escola": "Fatec Franco"},
     {"cargo": "Líder de Vendas", "setor": "Comércio", "cid": "Francisco Morato", "bairro": "Belém Capela", "sal": 2800, "escola": "ETEC Morato"}
 ]
 
-# 6. Filtros (Cidade e Busca por Bairro/Cargo)
+# 5. Filtros Dinâmicos
 filtro_cid = st.selectbox("📍 Filtrar por Cidade:", ["Todas", "Cajamar", "Caieiras", "Franco da Rocha", "Francisco Morato"])
-busca = st.text_input("🔍 Buscar por cargo ou bairro:", placeholder="Ex: Jordanésia ou Analista")
+busca = st.text_input("🔍 Buscar por cargo ou bairro:", placeholder="Ex: Jordanésia...")
 
-# 7. Exibição dos Cards
+# 6. Exibição dos Cards (O visual que você aprovou)
 st.write("---")
 for v in vagas:
     match_cid = (filtro_cid == "Todas" or filtro_cid == v['cid'])
@@ -74,15 +71,15 @@ for v in vagas:
                     <span class="badge-bairro">📍 {v['bairro']}</span>
                     <span style='color: #64748b; font-size: 0.8rem;'>{v['cid']}</span>
                 </div>
-                <div style='font-size: 1.1rem; font-weight: bold; margin-top: 8px; color: #0f172a;'>{v['cargo']}</div>
-                <div style='font-size: 0.85rem; color: #1e3a8a; font-weight: 500;'>Setor: {v['setor']}</div>
+                <div style='font-size: 1.1rem; font-weight: bold; margin-top: 8px;'>{v['cargo']}</div>
+                <div style='font-size: 0.85rem; color: #1e3a8a;'>Setor: {v['setor']}</div>
                 <div style='color: #059669; font-weight: bold; font-size: 1.1rem; margin: 8px 0;'>R$ {v['sal']:,}</div>
                 <div style='font-size: 0.8rem; border-top: 1px solid #eee; padding-top: 8px; color: #475569;'>
-                    🎓 <b>Formação:</b> {v['escola']}
+                    🎓 <b>Qualificação:</b> {v['escola']}
                 </div>
             </div>
             """, unsafe_allow_html=True)
         st.link_button(f"Ver cursos na {v['escola']}", "https://www.cps.sp.gov.br/")
 
 st.divider()
-st.caption("Fontes: Novo CAGED, RAIS e PNADC (3T-2025).")
+st.caption("Fontes: Novo CAGED, RAIS e PNADC (3T-2025)")
