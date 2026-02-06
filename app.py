@@ -2,34 +2,24 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. CONFIGURAÇÃO DE ESTILO (Fontes reduzidas e Dark Mode)
+# 1. CONFIGURAÇÃO DE ESTILO
 st.set_page_config(page_title="Mercado de Trabalho e Qualificação", layout="centered")
 
 st.markdown("""
     <style>
     .stApp { background-color: #0e1117 !important; color: #ffffff !important; }
-    
-    /* Header com fontes menores */
     .header-dark { background-color: #1a1d23; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 20px; }
     .header-dark h2 { font-size: 1.4rem !important; margin: 5px 0; }
-    
     .info-box { background-color: #1e293b; padding: 15px; border-radius: 8px; border-left: 4px solid #3b82f6; margin-bottom: 20px; }
-
-    /* Cards com títulos menores */
     .card-vaga { background-color: #1a1d23; padding: 15px; border-radius: 10px; margin-bottom: 12px; border-top: 1px solid #334155; box-shadow: 0 4px 6px rgba(0,0,0,0.4); }
     .titulo-vaga { font-size: 1.1rem !important; font-weight: bold; color: #ffffff; margin-bottom: 5px; }
-    
-    /* Bordas por Setor */
     .border-logistica { border-left: 5px solid #3b82f6; }
     .border-industria { border-left: 5px solid #10b981; }
     .border-servicos { border-left: 5px solid #f59e0b; }
     .border-comercio { border-left: 5px solid #8b5cf6; }
     .border-saude { border-left: 5px solid #ef4444; }
-
     .nivel-tag { font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; display: inline-block; background-color: #334151; color: #94a3b8; }
     .salario-valor { font-size: 1rem; font-weight: bold; color: #10b981; }
-
-    /* Tabela BI Ajustada */
     .dark-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; background-color: #111418; color: white; border-radius: 8px; overflow: hidden; }
     .dark-table th { background-color: #1e293b; padding: 10px; text-align: left; color: #94a3b8; border-bottom: 2px solid #334155; text-transform: uppercase; }
     .dark-table td { padding: 8px 10px; border-bottom: 1px solid #1e293b; }
@@ -42,13 +32,13 @@ with st.container():
     st.markdown("""
         <div class="info-box">
             <h5 style="margin:0; font-size: 1rem;">💡 Entenda este Painel</h5>
-            <p style="margin:5px 0 0 0; font-size:0.85rem; color:#94a3b8;">Conectamos oportunidades reais do Novo CAGED à sua qualificação ideal.</p>
+            <p style="margin:5px 0 0 0; font-size:0.85rem; color:#94a3b8;">Conectamos oportunidades reais do Novo CAGED (Dez/25) à qualificação ideal para o seu perfil.</p>
         </div>
     """, unsafe_allow_html=True)
     with st.expander("Ver Metodologia e Objetivo"):
         st.write("""
             Este aplicativo orienta cidadãos e gestores da Macrorregião de Franco da Rocha sobre as reais oportunidades de emprego formal. 
-            Cruzamos dados do **Novo CAGED (Dezembro/2025)** com cursos do **Centro Paula Souza (ETECs/FATECs)** e **Qualifica SP**, 
+            Cruzamos dados do **Novo CAGED** com cursos do **Centro Paula Souza (ETECs/FATECs)** e **Qualifica SP**, 
             direcionando você para a preparação correta conforme o nível de escolaridade da vaga.
         """)
 
@@ -64,7 +54,7 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# 4. BASE DE DADOS (Links corrigidos por nível)
+# 4. BASE DE DADOS (Correção de Links e Níveis)
 data_list = [
     # FRANCO DA ROCHA
     {"cid": "Franco da Rocha", "ocup": "Enfermeiro", "set": "Saúde", "cls": "border-saude", "sal": "4.800", "niv": "Superior", "esc": "FATEC Franco", "lnk": "https://www.fatecfrancodarocha.edu.br/", "sld": 12, "bai": "Centro"},
@@ -92,7 +82,7 @@ data_list = [
     {"cid": "Caieiras", "ocup": "Eletricista Industrial", "set": "Indústria", "cls": "border-industria", "sal": "4.200", "niv": "Médio/Técnico", "esc": "SENAI", "lnk": "https://sp.senai.br/", "sld": 19, "bai": "Laranjeiras"},
     {"cid": "Caieiras", "ocup": "Operador de Produção", "set": "Indústria", "cls": "border-industria", "sal": "2.800", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 115, "bai": "Laranjeiras"},
     {"cid": "Caieiras", "ocup": "Ajudante de Carga", "set": "Logística", "cls": "border-logistica", "sal": "1.950", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 204, "bai": "Centro"},
-    {"cid": "Caieiras", "ocup": "Auxiliar Administrativo", "set": "Serviços", "cls": "border-servicos", "sal": "2.200", "niv": "Médio/Técnico", "esc": "ETEC Caieiras", "lnk": "https://www.cps.sp.gov.br/", "sld": 62, "bai": "Centro"}
+    {"cid": "Caieiras", "ocup": "Auxiliar Administrativo", "set": "Serviços", "cls": "border-servicos", "sal": "2.200", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 62, "bai": "Centro"}
 ]
 
 # 5. FILTRO E GRÁFICO
@@ -130,3 +120,4 @@ st.markdown(html_table, unsafe_allow_html=True)
 # 8. NOTA TÉCNICA
 st.markdown("---")
 st.info("Fontes: Microdados PNADC 3T-2025 (IBGE) e Novo CAGED (Dezembro/2025).")
+
