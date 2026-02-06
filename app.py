@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. CONFIGURAÇÃO DE ESTILO (Fundo Preto e Contraste)
+# 1. CONFIGURAÇÃO DE ESTILO (Ajuste Final de Tabela BI)
 st.set_page_config(page_title="Mercado de Trabalho e Qualificação", layout="centered")
 
 st.markdown("""
@@ -27,23 +27,28 @@ st.markdown("""
 
     .titulo-vaga { font-size: 1.1rem; font-weight: bold; color: #ffffff; margin-bottom: 5px; }
     .nivel-tag { font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-bottom: 8px; display: inline-block; background-color: #334151; color: #94a3b8; }
-    .salario-valor { font-size: 1rem; font-weight: bold; color: #10b981; }
-
-    /* Tabela BI Blindada */
+    
+    /* TABELA BI REFINADA */
     .dark-table {
-        width: 100%; border-collapse: collapse; font-size: 0.8rem; background-color: #111418; color: white; border-radius: 8px; overflow: hidden;
+        width: 100%; border-collapse: collapse; font-size: 0.85rem; background-color: #111418; 
+        color: white; border-radius: 10px; overflow: hidden; margin-top: 10px;
     }
-    .dark-table th { background-color: #1e293b; padding: 10px; text-align: left; color: #94a3b8; border-bottom: 2px solid #334155; }
-    .dark-table td { padding: 8px 10px; border-bottom: 1px solid #1e293b; }
+    .dark-table th { 
+        background-color: #1e293b; padding: 12px; text-align: left; 
+        color: #94a3b8; border-bottom: 2px solid #334155; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .dark-table tr:nth-child(even) { background-color: #1a1d23; } /* Zebra Striping */
+    .dark-table td { padding: 12px; border-bottom: 1px solid #1e293b; }
+    .pos-saldo { color: #60a5fa; font-weight: bold; }
+    .salario-bi { color: #10b981; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
 # 2. CHAMADA EXPLICATIVA (Oculta por padrão)
-with st.expander("💡 Clique aqui para entender este Painel"):
+with st.expander("💡 Entenda este Painel"):
     st.write("""
         Este aplicativo foi desenvolvido para orientar cidadãos e gestores da Macrorregião de Franco da Rocha 
-        sobre as reais oportunidades de emprego formal. Cruzamos dados de contratações do **Novo CAGED (Dez/2025)** com cursos do **Centro Paula Souza (ETECs/FATECs)** e **Qualifica SP**, situando não apenas onde estão as vagas, 
-        mas onde se preparar para elas de acordo com seu nível de escolaridade.
+        sobre as reais oportunidades de emprego formal. Cruzamos dados de contratações do **Novo CAGED (Dez/2025)** com cursos do **Centro Paula Souza (ETECs/FATECs)** e **Qualifica SP**.
     """)
 
 # 3. PANORAMA MACRORREGIONAL
@@ -58,42 +63,32 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# 4. BASE DE DADOS COMPLETA (As 4 Cidades Reintegradas)
+# 4. BASE DE DADOS INTEGRAL
 data_list = [
     # CAJAMAR
     {"cid": "Cajamar", "ocup": "Analista de Logística", "set": "Logística", "cls": "border-logistica", "sal": "4.200", "niv": "Superior", "esc": "FATEC", "lnk": "https://www.fatec.sp.gov.br/", "sld": 142, "bai": "Jordanésia"},
     {"cid": "Cajamar", "ocup": "Conferente", "set": "Logística", "cls": "border-logistica", "sal": "2.600", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 310, "bai": "Polvilho"},
-    {"cid": "Cajamar", "ocup": "Líder de Recebimento", "set": "Logística", "cls": "border-logistica", "sal": "3.800", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 45, "bai": "Polvilho"},
     {"cid": "Cajamar", "ocup": "Auxiliar de Logística", "set": "Logística", "cls": "border-logistica", "sal": "2.150", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 520, "bai": "Gato Preto"},
     {"cid": "Cajamar", "ocup": "Op. de Empilhadeira", "set": "Logística", "cls": "border-logistica", "sal": "2.900", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 85, "bai": "Jordanésia"},
-    
+    {"cid": "Cajamar", "ocup": "Líder de Recebimento", "set": "Logística", "cls": "border-logistica", "sal": "3.800", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 45, "bai": "Polvilho"},
     # CAIEIRAS
     {"cid": "Caieiras", "ocup": "Mecânico Industrial", "set": "Indústria", "cls": "border-industria", "sal": "4.500", "niv": "Médio/Técnico", "esc": "ETEC Caieiras", "lnk": "https://www.cps.sp.gov.br/", "sld": 28, "bai": "Vila Rosina"},
-    {"cid": "Caieiras", "ocup": "Eletricista Industrial", "set": "Indústria", "cls": "border-industria", "sal": "4.200", "niv": "Médio/Técnico", "esc": "SENAI", "lnk": "https://sp.senai.br/", "sld": 19, "bai": "Laranjeiras"},
     {"cid": "Caieiras", "ocup": "Operador de Produção", "set": "Indústria", "cls": "border-industria", "sal": "2.800", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 115, "bai": "Laranjeiras"},
     {"cid": "Caieiras", "ocup": "Ajudante de Carga", "set": "Logística", "cls": "border-logistica", "sal": "1.950", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 204, "bai": "Centro"},
-    {"cid": "Caieiras", "ocup": "Auxiliar Administrativo", "set": "Serviços", "cls": "border-servicos", "sal": "2.200", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 62, "bai": "Centro"},
-
     # FRANCO DA ROCHA
     {"cid": "Franco da Rocha", "ocup": "Enfermeiro", "set": "Saúde", "cls": "border-saude", "sal": "4.800", "niv": "Superior", "esc": "FATEC Franco", "lnk": "https://www.fatecfrancodarocha.edu.br/", "sld": 12, "bai": "Centro"},
     {"cid": "Franco da Rocha", "ocup": "Técnico de Enfermagem", "set": "Saúde", "cls": "border-saude", "sal": "3.450", "niv": "Médio/Técnico", "esc": "ETEC Franco", "lnk": "https://www.cps.sp.gov.br/", "sld": 45, "bai": "Pouso Alegre"},
-    {"cid": "Franco da Rocha", "ocup": "Auxiliar Logístico", "set": "Logística", "cls": "border-logistica", "sal": "2.100", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 134, "bai": "Vila Rosalina"},
     {"cid": "Franco da Rocha", "ocup": "Vendedor", "set": "Comércio", "cls": "border-comercio", "sal": "2.050", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 89, "bai": "Centro"},
-    {"cid": "Franco da Rocha", "ocup": "Recepcionista", "set": "Serviços", "cls": "border-servicos", "sal": "1.850", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 26, "bai": "Centro"},
-
     # FRANCISCO MORATO
     {"cid": "Francisco Morato", "ocup": "Gerente de Loja", "set": "Comércio", "cls": "border-comercio", "sal": "3.800", "niv": "Médio/Técnico", "esc": "ETEC Morato", "lnk": "http://etecfranciscomorato.com.br/", "sld": 15, "bai": "Centro"},
-    {"cid": "Francisco Morato", "ocup": "Vendedor Especializado", "set": "Comércio", "cls": "border-comercio", "sal": "2.200", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 56, "bai": "Centro"},
-    {"cid": "Francisco Morato", "ocup": "Operador de Caixa", "set": "Comércio", "cls": "border-comercio", "sal": "1.820", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 112, "bai": "Belém Capela"},
-    {"cid": "Francisco Morato", "ocup": "Assistente Logístico", "set": "Logística", "cls": "border-logistica", "sal": "2.450", "niv": "Médio/Técnico", "esc": "ETEC Morato", "lnk": "http://etecfranciscomorato.com.br/", "sld": 42, "bai": "Centro"},
-    {"cid": "Francisco Morato", "ocup": "Estoquista", "set": "Logística", "cls": "border-logistica", "sal": "1.900", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 78, "bai": "Nova Morato"}
+    {"cid": "Francisco Morato", "ocup": "Operador de Caixa", "set": "Comércio", "cls": "border-comercio", "sal": "1.820", "niv": "Básico", "esc": "Qualifica SP", "lnk": "https://www.qualificasp.sp.gov.br/", "sld": 112, "bai": "Belém Capela"}
 ]
-df_total = pd.DataFrame(data_list)
 
-# 5. FILTRO E GRÁFICO (RESTAURADO)
+# 5. FILTRO E GRÁFICO
 cidade_sel = st.selectbox("📍 Filtrar por Município:", ["Franco da Rocha", "Francisco Morato", "Cajamar", "Caieiras"])
 
-st.markdown(f"### 📈 Tendência em {cidade_sel}: Saldo de Vagas")
+st.markdown(f"### 📈 Tendência em {cidade_sel}")
+df_total = pd.DataFrame(data_list)
 df_plot = df_total[df_total['cid'] == cidade_sel]
 fig = px.bar(df_plot, x="ocup", y="sld", labels={"sld": "Saldo", "ocup": "Ocupação"}, template="plotly_dark")
 fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color="white", height=300)
@@ -107,21 +102,35 @@ for v in data_list:
             <div class="card-vaga {v['cls']}">
                 <div class="nivel-tag">Nível: {v['niv']}</div>
                 <div class="titulo-vaga">{v['ocup']}</div>
-                <div style="color:#94a3b8; font-size:0.8rem; margin-bottom:10px;">📍 Bairro: {v['bai']} | <b>Saldo: +{v['sld']} vagas</b></div>
-                <div style="color:#10b981; font-weight:bold;">R$ {v['sal']}</div>
+                <div style="color:#94a3b8; font-size:0.8rem; margin-bottom:10px;">📍 Bairro: {v['bai']} | <b>Saldo: +{v['sld']}</b></div>
+                <div style="color:#10b981; font-weight:bold; font-size: 1.1rem;">R$ {v['sal']}</div>
             </div>
             """, unsafe_allow_html=True)
         st.link_button(f"Qualificação Sugerida: {v['esc']}", v['lnk'], use_container_width=True)
 
-# 7. TABELA GERAL (RESTAURADA E AJUSTADA)
+# 7. TABELA GERAL REFINADA (Ajuste Final)
 st.divider()
-st.markdown("### 📊 Panorama Geral (Novo CAGED Dez/2025)")
-html_table = """<table class="dark-table"><thead><tr><th>Ocupação</th><th>Cidade</th><th>Saldo</th><th>Salário</th></tr></thead><tbody>"""
+st.markdown("### 📊 Panorama de Saldos (CAGED Dez/2025)")
+html_table = """<table class="dark-table">
+    <thead>
+        <tr>
+            <th>Ocupação</th>
+            <th>Cidade</th>
+            <th>Saldo</th>
+            <th>Salário Médio</th>
+        </tr>
+    </thead>
+    <tbody>"""
 for i in data_list:
-    html_table += f"<tr><td><b>{i['ocup']}</b></td><td>{i['cid']}</td><td style='color:#60a5fa;'>+{i['sld']}</td><td style='color:#10b981; font-weight:bold;'>R$ {i['sal']}</td></tr>"
+    html_table += f"""
+        <tr>
+            <td><b>{i['ocup']}</b><br><small style='color:#94a3b8'>{i['niv']}</small></td>
+            <td>{i['cid']}</td>
+            <td class="pos-saldo">+{i['sld']}</td>
+            <td class="salario-bi">R$ {i['sal']}</td>
+        </tr>"""
 html_table += "</tbody></table>"
 st.markdown(html_table, unsafe_allow_html=True)
 
-# 8. NOTA TÉCNICA
 st.markdown("---")
 st.info("Fontes: Microdados PNADC 3T-2025 (IBGE) e Novo CAGED (Dezembro/2025).")
