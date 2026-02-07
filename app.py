@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. ESTILO MOBILE-FIRST COM FONTES REDUZIDAS
+# 1. ESTILO MOBILE-FIRST REFINADO
 st.set_page_config(page_title="BI Macrorregião", layout="centered")
 
 st.markdown("""
@@ -30,20 +30,21 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 2. EXPLICAÇÃO TÉCNICA E ABRANGÊNCIA
+# 2. EXPLICAÇÃO TÉCNICA (ATUALIZADA)
 with st.expander("💡 Notas Técnicas e Abrangência"):
     st.write("""
         **Abrangência:** Dados consolidados da Macrorregião de Franco da Rocha 
         (**Cajamar, Caieiras, Francisco Morato e Franco da Rocha**).
         
-        **Metodologia:** Os indicadores superiores refletem a **média ponderada da Macrorregião**. 
-        Ocupações baseadas no **Novo CAGED (Jan/2026)** e cursos integrados ao **Centro Paula Souza** e **Qualifica SP**.
+        **Metodologia:** * Indicadores superiores: Médias Macrorregião baseadas na **PNADC/IBGE 3T 2025**.
+        * Ocupações e Saldos: Baseados no **Novo CAGED (Jan/2026)**.
+        * Salários: Referem-se ao **Salário Admissional Médio**.
     """)
 
-# 3. INDICADORES SÍNTESE (FOCO NA MACRORREGIÃO)
+# 3. INDICADORES SÍNTESE (MÉDIAS PNADC/IBGE)
 st.markdown("""
     <div class="header-dark">
-        <div style="font-size: 0.58rem; color: #64748b; font-weight: bold; letter-spacing: 1px;">📊 MÉDIAS DA MACRORREGIÃO</div>
+        <div style="font-size: 0.58rem; color: #64748b; font-weight: bold; letter-spacing: 1px;">📊 MÉDIAS MACRORREGIÃO (PNADC/IBGE)</div>
         <h2>Mercado de Trabalho e Qualificação</h2>
         <div style="margin-top: 10px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 8px;">
             <div><small style="color: #94a3b8; font-size: 0.62rem;">Renda Média Região</small><br><b style="font-size: 0.85rem;">R$ 3.520,00</b></div>
@@ -52,35 +53,33 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# 4. BASE DE DADOS INTEGRAL (GARANTINDO TODAS AS CIDADES)
+# 4. BASE DE DADOS INTEGRAL (EXPANDIDA)
 data_base = [
     {"cid": "Cajamar", "ocup": "Auxiliar de Logística", "sld": 412, "sal": 2150, "curso": "Gestão de Estoques", "esc": "Qualifica SP"},
-    {"cid": "Franco da Rocha", "ocup": "Técnico de Enfermagem", "sld": 45, "sal": 3450, "curso": "Técnico em Enfermagem", "esc": "ETEC Franco"},
-    {"cid": "Caieiras", "ocup": "Mecânico Industrial", "sld": 28, "sal": 4500, "curso": "Mecânica Industrial", "esc": "ETEC Caieiras"},
-    {"cid": "Francisco Morato", "ocup": "Vendedor", "sld": 89, "sal": 2050, "curso": "Técnicas de Vendas", "esc": "Qualifica SP"},
     {"cid": "Cajamar", "ocup": "Analista de Logística", "sld": 142, "sal": 4200, "curso": "Logística FATEC", "esc": "FATEC"},
-    {"cid": "Francisco Morato", "ocup": "Gerente de Loja", "sld": 15, "sal": 3800, "curso": "Gestão Comercial", "esc": "ETEC Morato"},
-    {"cid": "Franco da Rocha", "ocup": "Enfermeiro", "sld": 12, "sal": 4800, "curso": "Gestão Hospitalar", "esc": "FATEC Franco"}
+    {"cid": "Franco da Rocha", "ocup": "Técnico de Enfermagem", "sld": 45, "sal": 3450, "curso": "Técnico em Enfermagem", "esc": "ETEC Franco"},
+    {"cid": "Franco da Rocha", "ocup": "Enfermeiro", "sld": 12, "sal": 4800, "curso": "Gestão Hospitalar", "esc": "FATEC Franco"},
+    {"cid": "Caieiras", "ocup": "Mecânico Industrial", "sld": 28, "sal": 4500, "curso": "Mecânica Industrial", "esc": "ETEC Caieiras"},
+    {"cid": "Caieiras", "ocup": "Operador de Produção", "sld": 115, "sal": 2850, "curso": "Processos Industriais", "esc": "Qualifica SP"},
+    {"cid": "Francisco Morato", "ocup": "Vendedor", "sld": 89, "sal": 2050, "curso": "Técnicas de Vendas", "esc": "Qualifica SP"},
+    {"cid": "Francisco Morato", "ocup": "Gerente de Loja", "sld": 15, "sal": 3800, "curso": "Gestão Comercial", "esc": "ETEC Morato"}
 ]
 df = pd.DataFrame(data_base)
-
-# Botão de Upload na Barra Lateral (Opcional)
-uploaded_file = st.sidebar.file_uploader("Upload Planilha (.xlsx)", type="xlsx")
-if uploaded_file:
-    df = pd.read_excel(uploaded_file)
 
 # 5. PESQUISA POR CIDADE
 st.markdown("<h4 style='font-size:0.95rem; margin-bottom:5px;'>📍 Oportunidades Locais</h4>", unsafe_allow_html=True)
 cid_sel = st.selectbox("Selecione o Município:", df['cid'].unique(), label_visibility="collapsed")
 
 for _, r in df[df['cid'] == cid_sel].iterrows():
+    # Formatação do salário com ponto para milhar
+    sal_formatado = f"{r['sal']:,.0f}".replace(",", ".")
     st.markdown(f"""
         <div class="card-vaga">
             <b>{r['ocup']}</b>
             <div class="curso-tag">📚 {r['curso']} (<span class="badge-inst">{r['esc']}</span>)</div>
             <div style="display: flex; justify-content: space-between; font-size: 0.72rem; margin-top:5px;">
                 <span style="color:#94a3b8;">Saldo: +{r['sld']}</span>
-                <span class="salario-bi">R$ {r['sal']:,}</span>
+                <span class="salario-bi">R$ {sal_formatado} (Adm.)</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -94,11 +93,23 @@ fig = px.bar(df.nlargest(5, 'sld'), x='sld', y='ocup', orientation='h', color='c
 fig.update_layout(font=dict(size=9), margin=dict(l=0, r=0, t=0, b=0), showlegend=False)
 st.plotly_chart(fig, use_container_width=True)
 
+# TABELA BI COM TÍTULOS CORRIGIDOS
 st.markdown("<h4 style='font-size:0.95rem; margin-top:10px;'>📋 Tabela BI Geral</h4>", unsafe_allow_html=True)
-html_table = f"""<table class="dark-table"><thead><tr><th>Ocupação</th><th>Cidade</th><th>Saldo</th><th>Salário</th></tr></thead><tbody>"""
+html_table = f"""<table class="dark-table">
+    <thead>
+        <tr>
+            <th>Ocupação</th>
+            <th>Cidade</th>
+            <th>Saldo (Adm-Dem)</th>
+            <th>Salário Adm.</th>
+        </tr>
+    </thead>
+    <tbody>"""
 for _, row in df.iterrows():
-    html_table += f"<tr><td>{row['ocup']}</td><td>{row['cid']}</td><td>+{row['sld']}</td><td class='salario-bi'>R$ {row['sal']}</td></tr>"
+    sal_tab = f"{row['sal']:,.0f}".replace(",", ".")
+    html_table += f"<tr><td>{row['ocup']}</td><td>{row['cid']}</td><td>+{row['sld']}</td><td class='salario-bi'>R$ {sal_tab}</td></tr>"
 html_table += "</tbody></table>"
 st.markdown(html_table, unsafe_allow_html=True)
 
-st.caption("Fontes: PNADC 3T-2025 e Novo CAGED (Janeiro/2026).")
+st.caption("Fontes: PNADC/IBGE 3T-2025 e Novo CAGED (Jan/2026).")
+
