@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. ESTILO MOBILE-FIRST
+# 1. ESTILO MOBILE-FIRST REFINADO
 st.set_page_config(page_title="BI Macrorregião", layout="centered")
 
 st.markdown("""
@@ -30,16 +30,16 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 2. NOTAS TÉCNICAS E FONTES
+# 2. NOTAS TÉCNICAS E ABRANGÊNCIA
 with st.expander("💡 Notas Técnicas e Abrangência"):
     st.write("""
-        **Abrangência:** Dados da Macrorregião de Franco da Rocha 
+        **Abrangência:** Dados consolidados da Macrorregião de Franco da Rocha 
         (**Cajamar, Caieiras, Francisco Morato e Franco da Rocha**).
         
-        **Fontes:**
-        * **Indicadores Superiores:** PNADC/IBGE 3T-2025 (Médias Regionais).
-        * **Tabela e Vagas:** Novo CAGED (Janeiro/2026).
-        * **Salário:** Valor nominal admissional médio.
+        **Metodologia e Fontes:**
+        * **Mídias Macrorregião:** Baseadas na **PNADC/IBGE 3T-2025**.
+        * **Tabela e Top 5:** Dados exclusivos do **Novo CAGED (Jan/2026)**.
+        * **Salário:** Valor nominal **Admissional Médio**.
     """)
 
 # 3. INDICADORES SÍNTESE (PNADC/IBGE)
@@ -54,24 +54,20 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-# 4. BASE DE DADOS AMPLIADA (4 POR CIDADE)
+# 4. BASE DE DADOS INTEGRAL (4 POR CIDADE)
 data_base = [
-    # CAJAMAR
     {"cid": "Cajamar", "ocup": "Auxiliar de Logística", "sld": 412, "sal": 2150, "curso": "Gestão de Estoques", "esc": "Qualifica SP"},
     {"cid": "Cajamar", "ocup": "Analista de Logística", "sld": 142, "sal": 4200, "curso": "Logística FATEC", "esc": "FATEC"},
     {"cid": "Cajamar", "ocup": "Conferente", "sld": 85, "sal": 2600, "curso": "Operações de CD", "esc": "ETEC"},
     {"cid": "Cajamar", "ocup": "Líder de Operações", "sld": 32, "sal": 5100, "curso": "Gestão de Equipes", "esc": "FATEC"},
-    # FRANCO DA ROCHA
     {"cid": "Franco da Rocha", "ocup": "Técnico de Enfermagem", "sld": 45, "sal": 3450, "curso": "Técnico em Enfermagem", "esc": "ETEC Franco"},
     {"cid": "Franco da Rocha", "ocup": "Enfermeiro", "sld": 12, "sal": 4800, "curso": "Gestão Hospitalar", "esc": "FATEC Franco"},
     {"cid": "Franco da Rocha", "ocup": "Auxiliar Administrativo", "sld": 28, "sal": 2300, "curso": "Gestão Empresarial", "esc": "ETEC"},
     {"cid": "Franco da Rocha", "ocup": "Recepcionista", "sld": 19, "sal": 1950, "curso": "Atendimento VIP", "esc": "Qualifica SP"},
-    # CAIEIRAS
     {"cid": "Caieiras", "ocup": "Mecânico Industrial", "sld": 28, "sal": 4500, "curso": "Mecânica Industrial", "esc": "ETEC Caieiras"},
     {"cid": "Caieiras", "ocup": "Operador de Produção", "sld": 115, "sal": 2850, "curso": "Processos Industriais", "esc": "Qualifica SP"},
     {"cid": "Caieiras", "ocup": "Técnico em Química", "sld": 14, "sal": 3900, "curso": "Química Industrial", "esc": "ETEC"},
     {"cid": "Caieiras", "ocup": "Eletricista", "sld": 22, "sal": 3200, "curso": "Elétrica Predial", "esc": "ETEC"},
-    # FRANCISCO MORATO
     {"cid": "Francisco Morato", "ocup": "Vendedor", "sld": 89, "sal": 2050, "curso": "Técnicas de Vendas", "esc": "Qualifica SP"},
     {"cid": "Francisco Morato", "ocup": "Gerente de Loja", "sld": 15, "sal": 3800, "curso": "Gestão Comercial", "esc": "ETEC Morato"},
     {"cid": "Francisco Morato", "ocup": "Auxiliar de Almoxarifado", "sld": 24, "sal": 2100, "curso": "Logística Básica", "esc": "Qualifica SP"},
@@ -98,8 +94,16 @@ for _, r in df[df['cid'] == cid_sel].iterrows():
 
 st.divider()
 
-# 6. TABELA BI COM TÍTULO E FONTE EXCLUSIVA CAGED
-st.markdown("<h4 style='font-size:0.95rem;'>📊 Tabela BI: Ocupações da Macrorregião</h4>", unsafe_allow_html=True)
+# 6. GRÁFICO TOP 5 (RESTAURADO)
+st.markdown("<h4 style='font-size:0.95rem;'>🏆 Top 5 Ocupações (Região)</h4>", unsafe_allow_html=True)
+top5 = df.nlargest(5, 'sld')
+fig = px.bar(top5, x='sld', y='ocup', orientation='h', color='cid', 
+             template="plotly_dark", height=230, text_auto=True)
+fig.update_layout(font=dict(size=9), margin=dict(l=0, r=0, t=0, b=0), showlegend=False)
+st.plotly_chart(fig, use_container_width=True)
+
+# 7. TABELA BI GERAL (FONTE CAGED)
+st.markdown("<h4 style='font-size:0.95rem; margin-top:10px;'>📊 Tabela BI: Ocupações da Macrorregião</h4>", unsafe_allow_html=True)
 st.markdown("<p style='font-size:0.65rem; color:#94a3b8; margin-top:-10px;'>Fonte: Novo CAGED (Jan/2026)</p>", unsafe_allow_html=True)
 
 html_table = f"""<table class="dark-table">
