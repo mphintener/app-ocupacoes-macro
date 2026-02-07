@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-# 1. ESTILO MOBILE-FIRST REFINADO
+# 1. ESTILO MOBILE-FIRST
 st.set_page_config(page_title="BI Macrorregião", layout="centered")
 
 st.markdown("""
@@ -30,71 +30,78 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 2. EXPLICAÇÃO TÉCNICA (ATUALIZADA)
+# 2. NOTAS TÉCNICAS E FONTES
 with st.expander("💡 Notas Técnicas e Abrangência"):
     st.write("""
-        **Abrangência:** Dados consolidados da Macrorregião de Franco da Rocha 
+        **Abrangência:** Dados da Macrorregião de Franco da Rocha 
         (**Cajamar, Caieiras, Francisco Morato e Franco da Rocha**).
         
-        **Metodologia:** * Indicadores superiores: Médias Macrorregião baseadas na **PNADC/IBGE 3T 2025**.
-        * Ocupações e Saldos: Baseados no **Novo CAGED (Jan/2026)**.
-        * Salários: Referem-se ao **Salário Admissional Médio**.
+        **Fontes:**
+        * **Indicadores Superiores:** PNADC/IBGE 3T-2025 (Médias Regionais).
+        * **Tabela e Vagas:** Novo CAGED (Janeiro/2026).
+        * **Salário:** Valor nominal admissional médio.
     """)
 
-# 3. INDICADORES SÍNTESE (MÉDIAS PNADC/IBGE)
+# 3. INDICADORES SÍNTESE (PNADC/IBGE)
 st.markdown("""
     <div class="header-dark">
         <div style="font-size: 0.58rem; color: #64748b; font-weight: bold; letter-spacing: 1px;">📊 MÉDIAS MACRORREGIÃO (PNADC/IBGE)</div>
         <h2>Mercado de Trabalho e Qualificação</h2>
         <div style="margin-top: 10px; display: flex; justify-content: space-between; border-top: 1px solid #334155; padding-top: 8px;">
-            <div><small style="color: #94a3b8; font-size: 0.62rem;">Renda Média Região</small><br><b style="font-size: 0.85rem;">R$ 3.520,00</b></div>
+            <div><small style="color: #94a3b8; font-size: 0.62rem;">Renda Média Região</small><br><b style="font-size: 0.85rem;">R$ 3.520.00</b></div>
             <div style="text-align: right;"><small style="color: #94a3b8; font-size: 0.62rem;">Taxa Desocupação</small><br><b style="font-size: 0.85rem; color: #f87171;">7,8%</b></div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-# 4. BASE DE DADOS INTEGRAL (EXPANDIDA)
+# 4. BASE DE DADOS AMPLIADA (4 POR CIDADE)
 data_base = [
+    # CAJAMAR
     {"cid": "Cajamar", "ocup": "Auxiliar de Logística", "sld": 412, "sal": 2150, "curso": "Gestão de Estoques", "esc": "Qualifica SP"},
     {"cid": "Cajamar", "ocup": "Analista de Logística", "sld": 142, "sal": 4200, "curso": "Logística FATEC", "esc": "FATEC"},
+    {"cid": "Cajamar", "ocup": "Conferente", "sld": 85, "sal": 2600, "curso": "Operações de CD", "esc": "ETEC"},
+    {"cid": "Cajamar", "ocup": "Líder de Operações", "sld": 32, "sal": 5100, "curso": "Gestão de Equipes", "esc": "FATEC"},
+    # FRANCO DA ROCHA
     {"cid": "Franco da Rocha", "ocup": "Técnico de Enfermagem", "sld": 45, "sal": 3450, "curso": "Técnico em Enfermagem", "esc": "ETEC Franco"},
     {"cid": "Franco da Rocha", "ocup": "Enfermeiro", "sld": 12, "sal": 4800, "curso": "Gestão Hospitalar", "esc": "FATEC Franco"},
+    {"cid": "Franco da Rocha", "ocup": "Auxiliar Administrativo", "sld": 28, "sal": 2300, "curso": "Gestão Empresarial", "esc": "ETEC"},
+    {"cid": "Franco da Rocha", "ocup": "Recepcionista", "sld": 19, "sal": 1950, "curso": "Atendimento VIP", "esc": "Qualifica SP"},
+    # CAIEIRAS
     {"cid": "Caieiras", "ocup": "Mecânico Industrial", "sld": 28, "sal": 4500, "curso": "Mecânica Industrial", "esc": "ETEC Caieiras"},
     {"cid": "Caieiras", "ocup": "Operador de Produção", "sld": 115, "sal": 2850, "curso": "Processos Industriais", "esc": "Qualifica SP"},
+    {"cid": "Caieiras", "ocup": "Técnico em Química", "sld": 14, "sal": 3900, "curso": "Química Industrial", "esc": "ETEC"},
+    {"cid": "Caieiras", "ocup": "Eletricista", "sld": 22, "sal": 3200, "curso": "Elétrica Predial", "esc": "ETEC"},
+    # FRANCISCO MORATO
     {"cid": "Francisco Morato", "ocup": "Vendedor", "sld": 89, "sal": 2050, "curso": "Técnicas de Vendas", "esc": "Qualifica SP"},
-    {"cid": "Francisco Morato", "ocup": "Gerente de Loja", "sld": 15, "sal": 3800, "curso": "Gestão Comercial", "esc": "ETEC Morato"}
+    {"cid": "Francisco Morato", "ocup": "Gerente de Loja", "sld": 15, "sal": 3800, "curso": "Gestão Comercial", "esc": "ETEC Morato"},
+    {"cid": "Francisco Morato", "ocup": "Auxiliar de Almoxarifado", "sld": 24, "sal": 2100, "curso": "Logística Básica", "esc": "Qualifica SP"},
+    {"cid": "Francisco Morato", "ocup": "Balconista", "sld": 37, "sal": 1850, "curso": "Varejo", "esc": "ETEC"}
 ]
 df = pd.DataFrame(data_base)
 
 # 5. PESQUISA POR CIDADE
 st.markdown("<h4 style='font-size:0.95rem; margin-bottom:5px;'>📍 Oportunidades Locais</h4>", unsafe_allow_html=True)
-cid_sel = st.selectbox("Selecione o Município:", df['cid'].unique(), label_visibility="collapsed")
+cid_sel = st.selectbox("Selecione:", df['cid'].unique(), label_visibility="collapsed")
 
 for _, r in df[df['cid'] == cid_sel].iterrows():
-    # Formatação do salário com ponto para milhar
-    sal_formatado = f"{r['sal']:,.0f}".replace(",", ".")
+    sal_format = f"{r['sal']:,.0f}".replace(",", ".")
     st.markdown(f"""
         <div class="card-vaga">
             <b>{r['ocup']}</b>
             <div class="curso-tag">📚 {r['curso']} (<span class="badge-inst">{r['esc']}</span>)</div>
             <div style="display: flex; justify-content: space-between; font-size: 0.72rem; margin-top:5px;">
                 <span style="color:#94a3b8;">Saldo: +{r['sld']}</span>
-                <span class="salario-bi">R$ {sal_formatado} (Adm.)</span>
+                <span class="salario-bi">R$ {sal_format} (Adm.)</span>
             </div>
         </div>
         """, unsafe_allow_html=True)
 
 st.divider()
 
-# 6. GRÁFICO E TABELA (FOCO TÉCNICO)
-st.markdown("<h4 style='font-size:0.95rem;'>📊 Top 5 Ocupações (Região)</h4>", unsafe_allow_html=True)
-fig = px.bar(df.nlargest(5, 'sld'), x='sld', y='ocup', orientation='h', color='cid', 
-             template="plotly_dark", height=220)
-fig.update_layout(font=dict(size=9), margin=dict(l=0, r=0, t=0, b=0), showlegend=False)
-st.plotly_chart(fig, use_container_width=True)
+# 6. TABELA BI COM TÍTULO E FONTE EXCLUSIVA CAGED
+st.markdown("<h4 style='font-size:0.95rem;'>📊 Tabela BI: Ocupações da Macrorregião</h4>", unsafe_allow_html=True)
+st.markdown("<p style='font-size:0.65rem; color:#94a3b8; margin-top:-10px;'>Fonte: Novo CAGED (Jan/2026)</p>", unsafe_allow_html=True)
 
-# TABELA BI COM TÍTULOS CORRIGIDOS
-st.markdown("<h4 style='font-size:0.95rem; margin-top:10px;'>📋 Tabela BI Geral</h4>", unsafe_allow_html=True)
 html_table = f"""<table class="dark-table">
     <thead>
         <tr>
@@ -105,11 +112,11 @@ html_table = f"""<table class="dark-table">
         </tr>
     </thead>
     <tbody>"""
-for _, row in df.iterrows():
+for _, row in df.sort_values('sld', ascending=False).iterrows():
     sal_tab = f"{row['sal']:,.0f}".replace(",", ".")
     html_table += f"<tr><td>{row['ocup']}</td><td>{row['cid']}</td><td>+{row['sld']}</td><td class='salario-bi'>R$ {sal_tab}</td></tr>"
 html_table += "</tbody></table>"
 st.markdown(html_table, unsafe_allow_html=True)
 
-st.caption("Fontes: PNADC/IBGE 3T-2025 e Novo CAGED (Jan/2026).")
+st.caption("Nota: O saldo e o salário admissional refletem dados exclusivos do Novo CAGED.")
 
