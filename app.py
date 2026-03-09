@@ -66,7 +66,17 @@ DADOS_ESTATICOS = pd.DataFrame([
 def tentar_basedosdados():
     try:
         import basedosdados as bd
-        billing = st.secrets.get("billing_project_id", "")
+        # Tenta ler billing_project_id de diferentes locais nos Secrets
+        billing = ""
+        try:
+            billing = st.secrets["billing_project_id"]
+        except Exception:
+            pass
+        if not billing:
+            try:
+                billing = st.secrets["gcp_service_account"]["project_id"]
+            except Exception:
+                pass
         if not billing:
             return None, "billing_project_id não configurado nos Secrets"
 
