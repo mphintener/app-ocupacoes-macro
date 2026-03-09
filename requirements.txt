@@ -1,4 +1,7 @@
 streamlit
 pandas
 plotly
+basedosdados
+db-dtypes
+pyarrow
 openpyxl
